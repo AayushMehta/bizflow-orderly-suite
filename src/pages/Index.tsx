@@ -14,7 +14,7 @@ const Index = () => {
       const business = localStorage.getItem("selectedBusiness");
       if (business) {
         // User is logged in and has selected a business, show dashboard
-        navigate("/");
+        navigate("/dashboard");
       } else {
         // User is logged in but needs to select a business
         navigate("/select-business");

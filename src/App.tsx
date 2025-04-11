@@ -20,6 +20,7 @@ import BusinessSettings from "./pages/BusinessSettings";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
+import Index from "./pages/Index";
 
 const queryClient = new QueryClient();
 
@@ -30,11 +31,12 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <Routes>
+          <Route path="/" element={<Index />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
           <Route path="/select-business" element={<BusinessSelect />} />
           <Route path="/" element={<AppLayout />}>
-            <Route index element={<Dashboard />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="quotations" element={<Quotations />} />
             <Route path="quotations/:id" element={<QuotationDetail />} />
             <Route path="purchase-orders" element={<PurchaseOrders />} />

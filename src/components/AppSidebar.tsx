@@ -53,8 +53,8 @@ const AppSidebar = () => {
           <SidebarGroupContent>
             <SidebarMenu>
               <SidebarMenuItem>
-                <SidebarMenuButton asChild className={isActivePath("/") ? "bg-sidebar-accent" : ""}>
-                  <button onClick={() => navigate("/")}>
+                <SidebarMenuButton asChild className={isActivePath("/dashboard") ? "bg-sidebar-accent" : ""}>
+                  <button onClick={() => navigate("/dashboard")}>
                     <BarChart3 className="h-5 w-5" />
                     <span>Dashboard</span>
                   </button>
