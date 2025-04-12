@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   ShoppingCart, 
   FileText, 
@@ -70,6 +70,7 @@ const getStatusBadge = (status: string) => {
 };
 
 const PurchaseOrders = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredOrders, setFilteredOrders] = useState(mockPurchaseOrders);
 
@@ -100,7 +101,7 @@ const PurchaseOrders = () => {
               Quotations
             </Link>
           </Button>
-          <Button>
+          <Button onClick={() => navigate("/purchase-orders/new")}>
             <Plus className="mr-2 h-4 w-4" />
             New Order
           </Button>
