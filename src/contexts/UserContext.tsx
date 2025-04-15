@@ -109,21 +109,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     // Define permissions for each role
     const rolePermissions = {
       "admin": {
-        view: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report"],
-        edit: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report"],
-        create: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report"],
-        delete: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report"]
+        view: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report", "product"],
+        edit: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report", "product"],
+        create: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report", "product"],
+        delete: ["business", "quotation", "purchase-order", "invoice", "client", "user", "report", "product"]
       },
       "partner": {
-        view: ["business", "quotation", "purchase-order", "invoice", "client", "report"],
-        edit: ["quotation", "purchase-order", "invoice"],
+        view: ["business", "quotation", "purchase-order", "invoice", "client", "report", "product"],
+        edit: ["quotation", "purchase-order", "invoice", "product"],
         create: ["quotation", "purchase-order", "invoice"],
         delete: []
       },
       "data-entry": {
-        view: ["business", "quotation", "purchase-order", "invoice", "client"],
-        edit: ["quotation", "purchase-order", "invoice", "client"],
-        create: ["quotation", "purchase-order", "invoice", "client"],
+        view: ["business", "quotation", "purchase-order", "invoice", "client", "product"],
+        edit: ["quotation", "purchase-order", "invoice", "client", "product"],
+        create: ["quotation", "purchase-order", "invoice", "client", "product"],
         delete: []
       }
     };

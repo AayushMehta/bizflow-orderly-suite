@@ -22,6 +22,8 @@ import {
   Settings,
   LogOut,
   Building,
+  Package,
+  UserPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
@@ -100,9 +102,38 @@ const AppSidebar = () => {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               )}
+              
+              {hasPermission("view", "product") && (
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild className={isActivePath("/products") ? "bg-sidebar-accent" : ""}>
+                    <button onClick={() => navigate("/products")}>
+                      <Package className="h-5 w-5" />
+                      <span>Product Catalog</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              )}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
+        
+        {hasPermission("view", "user") && (
+          <SidebarGroup>
+            <SidebarGroupLabel>Administration</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton asChild className={isActivePath("/teams") ? "bg-sidebar-accent" : ""}>
+                    <button onClick={() => navigate("/teams")}>
+                      <UserPlus className="h-5 w-5" />
+                      <span>Team Management</span>
+                    </button>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
         
         {hasPermission("view", "business") && (
           <SidebarGroup>

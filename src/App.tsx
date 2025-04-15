@@ -27,6 +27,8 @@ import Login from "./pages/Login";
 import Register from "./pages/Register";
 import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
+import Teams from "./pages/Teams";
+import ProductCatalog from "./pages/ProductCatalog";
 
 const queryClient = new QueryClient();
 
@@ -145,6 +147,16 @@ const AppWithProvider = () => (
               <Route path="profile" element={
                 <ProtectedRoute>
                   <Profile />
+                </ProtectedRoute>
+              } />
+              <Route path="teams" element={
+                <ProtectedRoute requiredPermission="view" resourceType="user">
+                  <Teams />
+                </ProtectedRoute>
+              } />
+              <Route path="products" element={
+                <ProtectedRoute requiredPermission="view" resourceType="product">
+                  <ProductCatalog />
                 </ProtectedRoute>
               } />
             </Route>
