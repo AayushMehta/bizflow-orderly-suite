@@ -12,6 +12,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { UserRole } from "@/contexts/UserContext";
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -19,7 +28,7 @@ const Register = () => {
     email: "",
     password: "",
     confirmPassword: "",
-    role: "",
+    role: "" as UserRole,
   });
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
@@ -30,7 +39,7 @@ const Register = () => {
     setFormData((prev) => ({ ...prev, [id]: value }));
   };
 
-  const handleRoleChange = (value: string) => {
+  const handleRoleChange = (value: UserRole) => {
     setFormData((prev) => ({ ...prev, role: value }));
   };
 
@@ -63,17 +72,17 @@ const Register = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-app-slate-50 py-12">
       <div className="w-full max-w-md">
-        <div className="bg-white p-8 rounded-lg shadow-md border border-app-slate-200">
-          <div className="flex flex-col items-center justify-center mb-6">
+        <Card>
+          <CardHeader className="space-y-1 flex flex-col items-center text-center">
             <div className="h-12 w-12 bg-app-blue-100 rounded-full flex items-center justify-center mb-4">
               <Building className="h-6 w-6 text-app-blue-600" />
             </div>
-            <h1 className="text-2xl font-bold text-app-slate-900">Create Account</h1>
-            <p className="text-app-slate-500 mt-1">Join BizFlow for business management</p>
-          </div>
+            <CardTitle className="text-2xl">Create Account</CardTitle>
+            <CardDescription>Join BizFlow for business management</CardDescription>
+          </CardHeader>
           
           <form onSubmit={handleRegister}>
-            <div className="space-y-4">
+            <CardContent className="space-y-4">
               <div className="space-y-2">
                 <label htmlFor="fullName" className="text-sm font-medium text-app-slate-700">
                   Full Name
@@ -134,18 +143,20 @@ const Register = () => {
                 <label htmlFor="role" className="text-sm font-medium text-app-slate-700">
                   Account Role
                 </label>
-                <Select onValueChange={handleRoleChange} required>
+                <Select onValueChange={handleRoleChange as (value: string) => void} required>
                   <SelectTrigger>
                     <SelectValue placeholder="Select your role" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="owner">Business Owner / Admin</SelectItem>
+                    <SelectItem value="admin">Business Owner / Admin</SelectItem>
                     <SelectItem value="partner">Business Partner</SelectItem>
-                    <SelectItem value="employee">Data Entry Employee</SelectItem>
+                    <SelectItem value="data-entry">Data Entry Employee</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
-              
+            </CardContent>
+            
+            <CardFooter className="flex flex-col space-y-4">
               <Button 
                 type="submit" 
                 className="w-full"
@@ -153,18 +164,18 @@ const Register = () => {
               >
                 {isLoading ? "Creating account..." : "Create account"}
               </Button>
-            </div>
+              
+              <div className="text-center text-sm">
+                <p className="text-app-slate-600">
+                  Already have an account?{" "}
+                  <Link to="/login" className="font-medium text-app-blue-600 hover:text-app-blue-500">
+                    Sign in
+                  </Link>
+                </p>
+              </div>
+            </CardFooter>
           </form>
-          
-          <div className="mt-6 text-center text-sm">
-            <p className="text-app-slate-600">
-              Already have an account?{" "}
-              <Link to="/login" className="font-medium text-app-blue-600 hover:text-app-blue-500">
-                Sign in
-              </Link>
-            </p>
-          </div>
-        </div>
+        </Card>
       </div>
     </div>
   );

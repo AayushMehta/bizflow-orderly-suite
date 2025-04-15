@@ -1,13 +1,14 @@
 
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "@/contexts/UserContext";
 
 const Index = () => {
   const navigate = useNavigate();
+  const { user, isLoading } = useUser();
   
   useEffect(() => {
-    // Check if user is logged in
-    const user = localStorage.getItem("user");
+    if (isLoading) return;
     
     if (user) {
       // Check if business is selected
@@ -23,7 +24,7 @@ const Index = () => {
       // User is not logged in, redirect to login
       navigate("/login");
     }
-  }, [navigate]);
+  }, [navigate, user, isLoading]);
 
   return (
     <div className="flex items-center justify-center h-screen">

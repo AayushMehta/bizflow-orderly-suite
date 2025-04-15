@@ -1,316 +1,148 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building, Plus, Edit, Trash2 } from "lucide-react";
+import { Building, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 
-interface Business {
-  id: string;
-  name: string;
-  location: string;
-  businessId: string;
-}
+// Mock business data
+const allBusinesses = [
+  {
+    id: "NYC001",
+    name: "New York Office",
+    description: "Manufacturing and headquarters",
+    createdAt: "2024-01-15"
+  },
+  {
+    id: "LA002",
+    name: "Los Angeles Branch",
+    description: "West coast operations",
+    createdAt: "2024-03-10"
+  },
+  {
+    id: "CHI003",
+    name: "Chicago Division",
+    description: "Midwest distribution center",
+    createdAt: "2024-05-22"
+  }
+];
 
 const BusinessSelect = () => {
   const navigate = useNavigate();
+  const { user } = useUser();
   const { toast } = useToast();
-  
-  // Mock businesses data
-  const [businesses, setBusinesses] = useState<Business[]>([
-    { 
-      id: "1", 
-      name: "New York Office", 
-      location: "New York, NY", 
-      businessId: "NYC001" 
-    },
-    { 
-      id: "2", 
-      name: "Los Angeles Branch", 
-      location: "Los Angeles, CA", 
-      businessId: "LA002" 
-    },
-    { 
-      id: "3", 
-      name: "Chicago Division", 
-      location: "Chicago, IL", 
-      businessId: "CHI003" 
-    },
-  ]);
-  
-  const [newBusiness, setNewBusiness] = useState<Partial<Business>>({
-    name: "",
-    location: "",
-  });
-  
-  const [editingBusiness, setEditingBusiness] = useState<Business | null>(null);
-  const [isDialogOpen, setIsDialogOpen] = useState(false);
-  
-  const handleSelectBusiness = (business: Business) => {
-    // In a real app, you'd store the selected business in context/state
-    localStorage.setItem("selectedBusiness", JSON.stringify(business));
-    toast({
-      title: "Business Selected",
-      description: `You are now working with ${business.name}`,
-    });
-    navigate("/");
-  };
-  
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    if (editingBusiness) {
-      setEditingBusiness({ ...editingBusiness, [name]: value });
-    } else {
-      setNewBusiness({ ...newBusiness, [name]: value });
+  const [businesses, setBusinesses] = useState<typeof allBusinesses>([]);
+
+  useEffect(() => {
+    if (user) {
+      // Filter businesses based on user access
+      const accessibleBusinesses = allBusinesses.filter(business => 
+        user.role === "admin" || user.businesses.includes(business.id)
+      );
+      setBusinesses(accessibleBusinesses);
+    }
+  }, [user]);
+
+  const handleSelectBusiness = (businessId: string) => {
+    // Find the business by ID
+    const selectedBusiness = businesses.find(b => b.id === businessId);
+    
+    if (selectedBusiness) {
+      // Store selected business in localStorage
+      localStorage.setItem("selectedBusiness", JSON.stringify(selectedBusiness));
+      
+      toast({
+        title: "Business selected",
+        description: `You are now working with ${selectedBusiness.name}.`
+      });
+      
+      // Navigate to dashboard
+      navigate("/dashboard");
     }
   };
-  
-  const handleAddBusiness = () => {
-    if (!newBusiness.name || !newBusiness.location) {
+
+  const handleCreateBusiness = () => {
+    // Check if user has permission to create businesses
+    if (user?.role !== "admin") {
       toast({
         variant: "destructive",
-        title: "Missing information",
-        description: "Please provide both name and location.",
+        title: "Permission denied",
+        description: "Only administrators can create new businesses."
       });
       return;
     }
     
-    // Generate a business ID based on location
-    const locationPrefix = newBusiness.location?.split(",")[0].substring(0, 3).toUpperCase();
-    const randomNum = Math.floor(100 + Math.random() * 900); // 3-digit number
-    const businessId = `${locationPrefix}${randomNum}`;
-    
-    const newBusinessComplete = {
-      id: Date.now().toString(),
-      name: newBusiness.name,
-      location: newBusiness.location,
-      businessId,
-    };
-    
-    setBusinesses([...businesses, newBusinessComplete]);
-    setNewBusiness({ name: "", location: "" });
-    setIsDialogOpen(false);
-    
+    // In a real app, this would navigate to a business creation form
     toast({
-      title: "Business Added",
-      description: `${newBusinessComplete.name} has been added to your account.`,
+      title: "Create business",
+      description: "Business creation would be implemented here."
     });
-  };
-  
-  const handleEditBusiness = () => {
-    if (!editingBusiness || !editingBusiness.name || !editingBusiness.location) {
-      return;
-    }
-    
-    setBusinesses(businesses.map(b => 
-      b.id === editingBusiness.id ? editingBusiness : b
-    ));
-    
-    setEditingBusiness(null);
-    setIsDialogOpen(false);
-    
-    toast({
-      title: "Business Updated",
-      description: `${editingBusiness.name} has been updated.`,
-    });
-  };
-  
-  const handleDeleteBusiness = (id: string) => {
-    setBusinesses(businesses.filter(b => b.id !== id));
-    
-    toast({
-      title: "Business Removed",
-      description: "The business has been removed from your account.",
-    });
-  };
-  
-  const openEditDialog = (business: Business) => {
-    setEditingBusiness(business);
-    setIsDialogOpen(true);
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-app-slate-50">
-      <header className="bg-white border-b border-app-slate-200 p-4">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center space-x-2">
-            <Building className="h-6 w-6 text-app-blue-600" />
-            <span className="text-lg font-bold text-app-slate-900">BizFlow</span>
-          </div>
-          <Button variant="ghost" onClick={() => navigate("/login")}>Logout</Button>
-        </div>
-      </header>
-      
-      <main className="flex-1 max-w-7xl w-full mx-auto p-6">
-        <div className="flex justify-between items-center mb-8">
+    <div className="min-h-screen flex items-center justify-center bg-app-slate-50 p-4">
+      <div className="w-full max-w-4xl bg-white rounded-lg shadow-md border border-app-slate-200 overflow-hidden">
+        <div className="px-6 py-4 border-b border-app-slate-200 flex justify-between items-center">
           <div>
-            <h1 className="text-2xl font-bold text-app-slate-900">Select a Business</h1>
-            <p className="text-app-slate-500">Choose a business to manage or add a new one</p>
+            <h1 className="text-xl font-bold text-app-slate-900">Select Business</h1>
+            <p className="text-app-slate-500">Choose which business you want to work with</p>
           </div>
-          
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="gap-2">
-                <Plus className="h-4 w-4" />
-                Add Business
-              </Button>
-            </DialogTrigger>
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>{editingBusiness ? "Edit Business" : "Add New Business"}</DialogTitle>
-                <DialogDescription>
-                  {editingBusiness 
-                    ? "Update the business details below." 
-                    : "Fill in the details to add a new business to your account."}
-                </DialogDescription>
-              </DialogHeader>
-              
-              <div className="space-y-4 py-4">
-                <div className="space-y-2">
-                  <label htmlFor="name" className="text-sm font-medium">
-                    Business Name
-                  </label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="e.g., New York Office"
-                    value={editingBusiness ? editingBusiness.name : newBusiness.name}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <label htmlFor="location" className="text-sm font-medium">
-                    Location
-                  </label>
-                  <Input
-                    id="location"
-                    name="location"
-                    placeholder="e.g., New York, NY"
-                    value={editingBusiness ? editingBusiness.location : newBusiness.location}
-                    onChange={handleInputChange}
-                  />
-                </div>
-                
-                {editingBusiness && (
-                  <div className="space-y-2">
-                    <label htmlFor="businessId" className="text-sm font-medium">
-                      Business ID
-                    </label>
-                    <Input
-                      id="businessId"
-                      disabled
-                      value={editingBusiness.businessId}
-                    />
-                    <p className="text-xs text-app-slate-500">Business ID cannot be changed</p>
-                  </div>
-                )}
-              </div>
-              
-              <DialogFooter>
-                <Button variant="outline" onClick={() => {
-                  setIsDialogOpen(false);
-                  setEditingBusiness(null);
-                  setNewBusiness({ name: "", location: "" });
-                }}>
-                  Cancel
-                </Button>
-                <Button onClick={editingBusiness ? handleEditBusiness : handleAddBusiness}>
-                  {editingBusiness ? "Save Changes" : "Add Business"}
-                </Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          {user?.role === "admin" && (
+            <Button onClick={handleCreateBusiness}>
+              <Plus className="mr-2 h-4 w-4" />
+              New Business
+            </Button>
+          )}
         </div>
         
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {businesses.map((business) => (
-            <Card key={business.id} className="border border-app-slate-200 hover:border-app-blue-300 transition-colors">
-              <CardHeader className="pb-2">
-                <CardTitle className="text-lg">{business.name}</CardTitle>
-                <CardDescription>{business.location}</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="text-sm font-medium flex items-center">
-                  <span className="text-app-slate-500 mr-2">ID:</span>
-                  <span className="bg-app-slate-100 px-2 py-1 rounded font-mono text-app-slate-800">
-                    {business.businessId}
-                  </span>
+        {businesses.length === 0 ? (
+          <div className="p-12 text-center">
+            <Building className="h-12 w-12 mx-auto text-app-slate-300 mb-4" />
+            <h2 className="text-lg font-medium text-app-slate-900 mb-2">No businesses available</h2>
+            <p className="text-app-slate-500 max-w-md mx-auto mb-6">
+              {user?.role === "admin" 
+                ? "You don't have any businesses yet. Create your first business to get started." 
+                : "You don't have access to any businesses. Please contact your administrator."}
+            </p>
+            {user?.role === "admin" && (
+              <Button onClick={handleCreateBusiness}>
+                <Plus className="mr-2 h-4 w-4" />
+                Create New Business
+              </Button>
+            )}
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 p-6">
+            {businesses.map((business) => (
+              <div
+                key={business.id}
+                className="border border-app-slate-200 rounded-lg p-4 hover:border-app-blue-400 hover:shadow-md transition-all cursor-pointer"
+                onClick={() => handleSelectBusiness(business.id)}
+              >
+                <div className="h-10 w-10 bg-app-blue-100 rounded-full flex items-center justify-center mb-3">
+                  <Building className="h-5 w-5 text-app-blue-600" />
                 </div>
-              </CardContent>
-              <CardFooter className="flex justify-between">
-                <div className="flex space-x-2">
-                  <Button 
-                    size="icon" 
-                    variant="outline"
-                    onClick={() => openEditDialog(business)}
-                  >
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                  
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button size="icon" variant="outline" className="text-red-500 border-red-200 hover:bg-red-50">
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          This will remove {business.name} from your account. This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction 
-                          className="bg-red-500 hover:bg-red-600"
-                          onClick={() => handleDeleteBusiness(business.id)}
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
+                <h3 className="font-medium text-app-slate-900">{business.name}</h3>
+                <p className="text-sm text-app-slate-500 mt-1">{business.description}</p>
+                <div className="flex justify-between items-center mt-4">
+                  <span className="text-xs text-app-slate-400">ID: {business.id}</span>
+                  <span className="text-xs text-app-slate-400">Created: {business.createdAt}</span>
                 </div>
-                
-                <Button onClick={() => handleSelectBusiness(business)}>
-                  Select
-                </Button>
-              </CardFooter>
-            </Card>
-          ))}
+              </div>
+            ))}
+          </div>
+        )}
+        
+        <div className="px-6 py-4 border-t border-app-slate-200 bg-app-slate-50 flex justify-between items-center">
+          <div className="text-sm text-app-slate-500">
+            Logged in as <span className="font-medium">{user?.name}</span> ({user?.role})
+          </div>
+          <Button variant="outline" size="sm" onClick={() => navigate("/login")}>
+            Change Account
+          </Button>
         </div>
-      </main>
+      </div>
     </div>
   );
 };

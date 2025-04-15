@@ -28,6 +28,7 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { useUser } from "@/contexts/UserContext";
 
 type Notification = {
   id: string;
@@ -40,7 +41,11 @@ type Notification = {
 
 const TopNavBar = () => {
   const navigate = useNavigate();
-  const [currentBusiness, setCurrentBusiness] = useState({ id: "NYC001", name: "New York Office" });
+  const { user, logout } = useUser();
+  const [currentBusiness, setCurrentBusiness] = useState(() => {
+    const stored = localStorage.getItem("selectedBusiness");
+    return stored ? JSON.parse(stored) : { id: "", name: "No Business Selected" };
+  });
   const [showNotifications, setShowNotifications] = useState(false);
   
   // Mock notifications data
@@ -71,22 +76,29 @@ const TopNavBar = () => {
     }
   ]);
   
-  // Mock user data
-  const user = {
-    name: "John Doe",
-    role: "Administrator",
-  };
-  
-  // Mock businesses data for the dropdown
-  const businesses = [
-    { id: "NYC001", name: "New York Office" },
-    { id: "LA002", name: "Los Angeles Branch" },
-    { id: "CHI003", name: "Chicago Division" },
-  ];
+  // Mock businesses data for the dropdown - in a real app this would come from an API or context
+  const [businesses, setBusinesses] = useState(() => {
+    if (user?.role === "admin") {
+      return [
+        { id: "NYC001", name: "New York Office" },
+        { id: "LA002", name: "Los Angeles Branch" },
+        { id: "CHI003", name: "Chicago Division" },
+      ];
+    } else if (user?.role === "partner") {
+      return [
+        { id: "NYC001", name: "New York Office" },
+        { id: "LA002", name: "Los Angeles Branch" },
+      ];
+    } else {
+      return [
+        { id: "NYC001", name: "New York Office" },
+      ];
+    }
+  });
 
   const handleBusinessChange = (business: { id: string; name: string }) => {
     setCurrentBusiness(business);
-    // In a real app, you'd dispatch an action to change the context
+    localStorage.setItem("selectedBusiness", JSON.stringify(business));
   };
 
   const markAllAsRead = () => {
@@ -100,6 +112,19 @@ const TopNavBar = () => {
   };
 
   const unreadCount = notifications.filter(n => !n.read).length;
+
+  const getRoleBadge = () => {
+    switch (user?.role) {
+      case "admin":
+        return <Badge className="bg-purple-100 text-purple-700 border-purple-200">Administrator</Badge>;
+      case "partner":
+        return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Partner</Badge>;
+      case "data-entry":
+        return <Badge className="bg-green-100 text-green-700 border-green-200">Data Entry</Badge>;
+      default:
+        return null;
+    }
+  };
 
   return (
     <div className="h-16 px-4 border-b bg-white flex items-center justify-between">
@@ -208,21 +233,22 @@ const TopNavBar = () => {
           <DropdownMenuTrigger asChild>
             <Button variant="ghost" className="gap-2">
               <User className="h-5 w-5" />
-              {user.name}
+              {user?.name}
               <ChevronDown className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem className="text-muted-foreground">
-              {user.role}
+            <DropdownMenuItem className="flex justify-between items-center pointer-events-none">
+              <span className="text-muted-foreground">Role:</span>
+              {getRoleBadge()}
             </DropdownMenuItem>
             <DropdownMenuItem onClick={() => navigate("/profile")}>
               Profile Settings
             </DropdownMenuItem>
             <DropdownMenuSeparator />
-            <DropdownMenuItem onClick={() => navigate("/login")}>
+            <DropdownMenuItem onClick={logout}>
               Logout
             </DropdownMenuItem>
           </DropdownMenuContent>

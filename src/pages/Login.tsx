@@ -5,7 +5,7 @@ import { Building, Lock } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/components/ui/use-toast";
-import { toast } from "@/hooks/use-toast";
+import { useUser } from "@/contexts/UserContext";
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,18 +13,16 @@ const Login = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { login } = useUser();
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
 
-    // Simulate API call
-    setTimeout(() => {
-      // Mock validation
-      if (email === "admin@example.com" && password === "password") {
-        // Store user in localStorage (in a real app, you'd store a token)
-        localStorage.setItem("user", JSON.stringify({ email, role: "admin" }));
-        
+    try {
+      const success = await login(email, password);
+      
+      if (success) {
         toast({
           title: "Login successful",
           description: "Welcome back to BizFlow.",
@@ -38,8 +36,15 @@ const Login = () => {
           description: "Invalid email or password. Please try again.",
         });
       }
+    } catch (error) {
+      toast({
+        variant: "destructive",
+        title: "Login error",
+        description: "An unexpected error occurred. Please try again.",
+      });
+    } finally {
       setIsLoading(false);
-    }, 1000);
+    }
   };
 
   return (
@@ -63,7 +68,7 @@ const Login = () => {
                 <Input
                   id="email"
                   type="email"
-                  placeholder="admin@example.com"
+                  placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
@@ -107,9 +112,16 @@ const Login = () => {
           </div>
           
           <div className="mt-8 pt-6 border-t border-app-slate-200">
-            <div className="flex items-center justify-center text-sm text-app-slate-500">
-              <Lock className="h-3 w-3 mr-1" />
-              <span>Demo credentials: admin@example.com / password</span>
+            <div className="flex flex-col items-center text-sm text-app-slate-500 space-y-2">
+              <div className="flex items-center">
+                <Lock className="h-3 w-3 mr-1" />
+                <span>Demo credentials:</span>
+              </div>
+              <ul className="text-left w-full max-w-xs space-y-1">
+                <li><strong>Admin:</strong> admin@example.com / password</li>
+                <li><strong>Partner:</strong> partner@example.com / password</li>
+                <li><strong>Data Entry:</strong> dataentry@example.com / password</li>
+              </ul>
             </div>
           </div>
         </div>

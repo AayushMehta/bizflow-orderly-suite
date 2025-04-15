@@ -1,23 +1,10 @@
 
 import { useState } from "react";
-import { 
-  User, 
-  Mail, 
-  Phone, 
-  Lock,
-  Shield,
-  Bell,
-  CreditCard,
-  LogOut,
-  Save,
-  UserCog
-} from "lucide-react";
-
+import { User, Lock, Mail, Building, Shield } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
-import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
+import { useUser } from "@/contexts/UserContext";
 import {
   Card,
   CardContent,
@@ -32,392 +19,238 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import { useToast } from "@/components/ui/use-toast";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Label } from "@/components/ui/label";
+import { Badge } from "@/components/ui/badge";
 
 const Profile = () => {
+  const { user } = useUser();
   const { toast } = useToast();
-  const [activeTab, setActiveTab] = useState("personal");
   
-  // Mock user data
-  const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    phone: "+1 (555) 123-4567",
-    avatar: "",
-    role: "Administrator",
-    notificationsEmail: true,
-    notificationsBrowser: true,
-    twoFactorAuth: false
+  const [formData, setFormData] = useState({
+    name: user?.name || "",
+    email: user?.email || "",
+    currentPassword: "",
+    newPassword: "",
+    confirmPassword: "",
   });
-  
-  const handleInputChange = (field: string, value: string | boolean) => {
-    setUserData(prev => ({
-      ...prev,
-      [field]: value
-    }));
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, value } = e.target;
+    setFormData(prev => ({ ...prev, [id]: value }));
   };
-  
-  const handleSavePersonal = () => {
+
+  const handleProfileUpdate = (e: React.FormEvent) => {
+    e.preventDefault();
+    // Simulate API call
     toast({
       title: "Profile updated",
-      description: "Your personal information has been updated successfully."
+      description: "Your profile information has been updated.",
     });
   };
-  
-  const handleSavePassword = () => {
+
+  const handlePasswordChange = (e: React.FormEvent) => {
+    e.preventDefault();
+    
+    if (formData.newPassword !== formData.confirmPassword) {
+      toast({
+        variant: "destructive",
+        title: "Password mismatch",
+        description: "New password and confirm password don't match.",
+      });
+      return;
+    }
+    
+    // Simulate API call
     toast({
       title: "Password updated",
-      description: "Your password has been changed successfully."
+      description: "Your password has been changed successfully.",
     });
+    
+    // Reset password fields
+    setFormData(prev => ({
+      ...prev,
+      currentPassword: "",
+      newPassword: "",
+      confirmPassword: "",
+    }));
   };
-  
-  const handleSaveNotifications = () => {
-    toast({
-      title: "Notification preferences updated",
-      description: "Your notification settings have been saved."
-    });
-  };
-  
-  const handleSaveSecurity = () => {
-    toast({
-      title: "Security settings updated",
-      description: "Your security preferences have been saved."
-    });
-  };
-  
+
   return (
-    <div className="max-w-4xl mx-auto space-y-6 pb-10">
-      <div>
-        <h1 className="text-2xl font-bold text-app-slate-900">My Profile</h1>
-        <p className="text-app-slate-500">Manage your account settings and preferences</p>
-      </div>
-      
-      <div className="flex items-center space-x-4">
-        <Avatar className="h-20 w-20">
-          <AvatarImage src={userData.avatar} />
-          <AvatarFallback className="text-xl">
-            {userData.name.split(" ").map(n => n[0]).join("")}
-          </AvatarFallback>
-        </Avatar>
+    <div className="max-w-4xl mx-auto space-y-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <div>
-          <h2 className="text-xl font-semibold">{userData.name}</h2>
-          <p className="text-muted-foreground">{userData.role}</p>
+          <h1 className="text-2xl font-bold text-app-slate-900">My Profile</h1>
+          <p className="text-app-slate-500">Manage your account settings and preferences</p>
         </div>
       </div>
-      
-      <Tabs defaultValue="personal" value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5">
-          <TabsTrigger value="personal">Personal Info</TabsTrigger>
-          <TabsTrigger value="security">Password & Security</TabsTrigger>
-          <TabsTrigger value="notifications">Notifications</TabsTrigger>
-          <TabsTrigger value="billing">Billing</TabsTrigger>
-          <TabsTrigger value="admin">Admin Settings</TabsTrigger>
-        </TabsList>
-        
-        <TabsContent value="personal" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Personal Information</CardTitle>
-              <CardDescription>
-                Update your personal details and contact information.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Full Name</Label>
-                <div className="flex">
-                  <div className="relative flex-1">
-                    <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="name" 
-                      className="pl-10" 
-                      value={userData.name}
-                      onChange={(e) => handleInputChange("name", e.target.value)}
-                    />
-                  </div>
-                </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <Card className="col-span-1">
+          <CardHeader>
+            <CardTitle>Account</CardTitle>
+            <CardDescription>Your account information</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col items-center text-center">
+            <div className="h-24 w-24 bg-app-slate-100 rounded-full flex items-center justify-center mb-4">
+              <User className="h-12 w-12 text-app-slate-500" />
+            </div>
+            <h3 className="font-medium text-lg">{user?.name}</h3>
+            <p className="text-app-slate-500 text-sm mt-1">{user?.email}</p>
+            <div className="mt-3">
+              {user?.role === "admin" && (
+                <Badge className="bg-purple-100 text-purple-700 border-purple-200">Administrator</Badge>
+              )}
+              {user?.role === "partner" && (
+                <Badge className="bg-blue-100 text-blue-700 border-blue-200">Partner</Badge>
+              )}
+              {user?.role === "data-entry" && (
+                <Badge className="bg-green-100 text-green-700 border-green-200">Data Entry</Badge>
+              )}
+            </div>
+          </CardContent>
+          <CardFooter className="flex flex-col space-y-4">
+            <div className="text-sm">
+              <div className="flex items-center mb-2">
+                <Shield className="h-4 w-4 mr-2 text-app-slate-400" />
+                <span className="text-app-slate-600">Role Permissions:</span>
               </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
-                <div className="flex">
-                  <div className="relative flex-1">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="email" 
-                      type="email" 
-                      className="pl-10" 
-                      value={userData.email}
-                      onChange={(e) => handleInputChange("email", e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <div className="flex">
-                  <div className="relative flex-1">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="phone" 
-                      className="pl-10" 
-                      value={userData.phone}
-                      onChange={(e) => handleInputChange("phone", e.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="avatar">Profile Picture</Label>
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-16 w-16">
-                    <AvatarImage src={userData.avatar} />
-                    <AvatarFallback className="text-lg">
-                      {userData.name.split(" ").map(n => n[0]).join("")}
-                    </AvatarFallback>
-                  </Avatar>
-                  <Button variant="outline">Change Picture</Button>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSavePersonal}>
-                <Save className="h-4 w-4 mr-2" />
-                Save Changes
-              </Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="security" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Password</CardTitle>
-              <CardDescription>
-                Change your password to keep your account secure.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="current-password">Current Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="current-password" type="password" className="pl-10" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="new-password">New Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="new-password" type="password" className="pl-10" />
-                </div>
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="confirm-password">Confirm New Password</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input id="confirm-password" type="password" className="pl-10" />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSavePassword}>Update Password</Button>
-            </CardFooter>
-          </Card>
-          
-          <Card>
-            <CardHeader>
-              <CardTitle>Two-Factor Authentication</CardTitle>
-              <CardDescription>
-                Add an extra layer of security to your account.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Two-Factor Authentication</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Require an authentication code in addition to your password.
-                  </p>
-                </div>
-                <Switch 
-                  checked={userData.twoFactorAuth}
-                  onCheckedChange={(checked) => handleInputChange("twoFactorAuth", checked)}
-                />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSaveSecurity}>Save Security Settings</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="notifications" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
-              <CardDescription>
-                Control how you receive notifications from the system.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <Mail className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Email Notifications</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Receive notifications about quotations, orders, and invoices via email.
-                  </p>
-                </div>
-                <Switch 
-                  checked={userData.notificationsEmail}
-                  onCheckedChange={(checked) => handleInputChange("notificationsEmail", checked)}
-                />
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <Bell className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Browser Notifications</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Receive in-app notifications while using the system.
-                  </p>
-                </div>
-                <Switch 
-                  checked={userData.notificationsBrowser}
-                  onCheckedChange={(checked) => handleInputChange("notificationsBrowser", checked)}
-                />
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button onClick={handleSaveNotifications}>Save Notification Settings</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="billing" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Billing Information</CardTitle>
-              <CardDescription>
-                Manage your payment methods and subscription details.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Subscription Plan</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Business Pro Plan - $49.99/month
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Change Plan</Button>
-              </div>
-              
-              <Separator />
-              
-              <div>
-                <div className="flex items-center gap-2 mb-2">
-                  <CreditCard className="h-4 w-4 text-muted-foreground" />
-                  <span className="font-medium">Payment Methods</span>
-                </div>
-                <div className="border rounded-md p-3 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="bg-slate-100 p-2 rounded">
-                      <CreditCard className="h-4 w-4" />
+              {user?.role === "admin" && (
+                <ul className="text-xs text-app-slate-500 space-y-1 ml-6">
+                  <li>• Full access to all system features</li>
+                  <li>• Can create and manage businesses</li>
+                  <li>• Can manage user access and roles</li>
+                  <li>• Unrestricted data modification rights</li>
+                </ul>
+              )}
+              {user?.role === "partner" && (
+                <ul className="text-xs text-app-slate-500 space-y-1 ml-6">
+                  <li>• Can view all business data</li>
+                  <li>• Can create and edit documents</li>
+                  <li>• Cannot delete critical business data</li>
+                  <li>• Cannot manage user access</li>
+                </ul>
+              )}
+              {user?.role === "data-entry" && (
+                <ul className="text-xs text-app-slate-500 space-y-1 ml-6">
+                  <li>• Limited to assigned businesses only</li>
+                  <li>• Can create and update basic records</li>
+                  <li>• Cannot delete records</li>
+                  <li>• Cannot access business settings</li>
+                </ul>
+              )}
+            </div>
+            <Button variant="outline" className="w-full" disabled>
+              <Building className="mr-2 h-4 w-4" />
+              {user?.role === "admin" ? "Managing All Businesses" : `Managing ${user?.businesses.length} Business(es)`}
+            </Button>
+          </CardFooter>
+        </Card>
+
+        <div className="col-span-1 md:col-span-2">
+          <Tabs defaultValue="profile">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="profile">Profile Information</TabsTrigger>
+              <TabsTrigger value="security">Security</TabsTrigger>
+            </TabsList>
+            
+            <TabsContent value="profile">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Profile Information</CardTitle>
+                  <CardDescription>Update your personal information</CardDescription>
+                </CardHeader>
+                <form onSubmit={handleProfileUpdate}>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Full Name</Label>
+                      <div className="relative">
+                        <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input 
+                          id="name" 
+                          className="pl-9" 
+                          value={formData.name}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-medium">Visa ending in 4242</p>
-                      <p className="text-sm text-muted-foreground">Expires 12/2026</p>
+                    <div className="space-y-2">
+                      <Label htmlFor="email">Email Address</Label>
+                      <div className="relative">
+                        <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input 
+                          id="email" 
+                          type="email" 
+                          className="pl-9" 
+                          value={formData.email}
+                          onChange={handleChange}
+                        />
+                      </div>
                     </div>
-                  </div>
-                  <Button variant="ghost" size="sm">Edit</Button>
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter>
-              <Button variant="outline">Add Payment Method</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-        
-        <TabsContent value="admin" className="space-y-4 mt-4">
-          <Card>
-            <CardHeader>
-              <CardTitle>Administrator Settings</CardTitle>
-              <CardDescription>
-                Manage global system settings and user permissions.
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <UserCog className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">User Management</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Manage user accounts, roles, and permissions.
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Manage Users</Button>
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <Shield className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Security Settings</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Configure global security policies and access controls.
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Configure</Button>
-              </div>
-              
-              <Separator />
-              
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <div className="flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-muted-foreground" />
-                    <span className="font-medium">Billing & Subscription</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground">
-                    Manage organization billing and subscription details.
-                  </p>
-                </div>
-                <Button variant="outline" size="sm">Manage Billing</Button>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline" className="gap-1 text-red-600 border-red-200 hover:bg-red-50">
-                <LogOut className="h-4 w-4" />
-                Log Out All Users
-              </Button>
-              <Button>Save Admin Settings</Button>
-            </CardFooter>
-          </Card>
-        </TabsContent>
-      </Tabs>
+                  </CardContent>
+                  <CardFooter>
+                    <Button type="submit">Save Changes</Button>
+                  </CardFooter>
+                </form>
+              </Card>
+            </TabsContent>
+            
+            <TabsContent value="security">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Change Password</CardTitle>
+                  <CardDescription>Update your account password</CardDescription>
+                </CardHeader>
+                <form onSubmit={handlePasswordChange}>
+                  <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="currentPassword">Current Password</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input 
+                          id="currentPassword" 
+                          type="password" 
+                          className="pl-9" 
+                          value={formData.currentPassword}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="newPassword">New Password</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input 
+                          id="newPassword" 
+                          type="password" 
+                          className="pl-9" 
+                          value={formData.newPassword}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                      <div className="relative">
+                        <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-gray-400" />
+                        <Input 
+                          id="confirmPassword" 
+                          type="password" 
+                          className="pl-9" 
+                          value={formData.confirmPassword}
+                          onChange={handleChange}
+                        />
+                      </div>
+                    </div>
+                  </CardContent>
+                  <CardFooter>
+                    <Button type="submit">Update Password</Button>
+                  </CardFooter>
+                </form>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
+      </div>
     </div>
   );
 };
