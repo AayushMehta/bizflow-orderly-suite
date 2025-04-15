@@ -1,6 +1,5 @@
-
-import { useState } from "react";
-import { Link } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   BarChart3, 
   TrendingUp,
@@ -10,7 +9,9 @@ import {
   FileText,
   Receipt,
   Clock,
-  AlertTriangle
+  AlertTriangle,
+  Upload,
+  FileUp
 } from "lucide-react";
 import {
   Card,
@@ -24,9 +25,36 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, BarChart, Bar, PieChart, Pie, Cell } from "recharts";
+import { Sheet, SheetTrigger, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
+import { useToast } from "@/components/ui/use-toast";
 
 const Dashboard = () => {
   const [timeframe, setTimeframe] = useState("month");
+  const navigate = useNavigate();
+  const { toast } = useToast();
+  const [selectedBusiness, setSelectedBusiness] = useState<any>(null);
+  
+  useEffect(() => {
+    const businessData = localStorage.getItem("selectedBusiness");
+    if (businessData) {
+      setSelectedBusiness(JSON.parse(businessData));
+    }
+  }, []);
+  
+  // Mock function to handle document upload
+  const handleDocumentUpload = (files: FileList | null) => {
+    if (files && files.length > 0) {
+      toast({
+        title: "Document uploaded",
+        description: `Successfully uploaded ${files.length} document(s).`
+      });
+      
+      // In a real app, this would update the business's pending documents count
+      const updatedBusiness = { ...selectedBusiness, pendingDocuments: Math.max(0, selectedBusiness.pendingDocuments - files.length) };
+      localStorage.setItem("selectedBusiness", JSON.stringify(updatedBusiness));
+      setSelectedBusiness(updatedBusiness);
+    }
+  };
   
   // Mock data for financial metrics
   const financialSummary = {
@@ -123,6 +151,57 @@ const Dashboard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <h1 className="text-2xl font-bold text-app-slate-900">Dashboard</h1>
         <div className="flex items-center space-x-4">
+          {selectedBusiness?.pendingDocuments > 0 && (
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="outline" size="sm" className="flex items-center text-yellow-600 border-yellow-300 bg-yellow-50 hover:bg-yellow-100">
+                  <FileUp className="h-4 w-4 mr-2" />
+                  Upload Pending Documents
+                </Button>
+              </SheetTrigger>
+              <SheetContent>
+                <SheetHeader>
+                  <SheetTitle>Upload Business Documents</SheetTitle>
+                  <SheetDescription>
+                    Upload the required documents for your business verification.
+                  </SheetDescription>
+                </SheetHeader>
+                <div className="py-6">
+                  <div className="space-y-4">
+                    <div className="rounded-lg border border-dashed border-app-slate-300 p-10 text-center">
+                      <Upload className="h-10 w-10 text-app-slate-400 mx-auto mb-4" />
+                      <h3 className="text-app-slate-800 font-medium mb-2">Upload Documents</h3>
+                      <p className="text-app-slate-500 text-sm mb-4">
+                        Drag and drop files here, or click to browse
+                      </p>
+                      <input
+                        type="file"
+                        id="document-upload"
+                        multiple
+                        className="hidden"
+                        onChange={(e) => handleDocumentUpload(e.target.files)}
+                      />
+                      <label htmlFor="document-upload">
+                        <Button type="button" variant="outline" className="mt-2">
+                          Select Files
+                        </Button>
+                      </label>
+                    </div>
+                    
+                    <div className="space-y-2">
+                      <h4 className="font-medium text-app-slate-800">Required Documents:</h4>
+                      <ul className="list-disc list-inside space-y-1 text-sm text-app-slate-600">
+                        <li>Business registration certificate</li>
+                        <li>Tax identification documents</li>
+                        <li>Business address proof</li>
+                        <li>Owner identification proof</li>
+                      </ul>
+                    </div>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          )}
           <Tabs defaultValue="month" className="space-y-4" onValueChange={setTimeframe}>
             <TabsList>
               <TabsTrigger value="week">Week</TabsTrigger>

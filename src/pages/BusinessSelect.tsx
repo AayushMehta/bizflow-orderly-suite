@@ -12,19 +12,22 @@ const allBusinesses = [
     id: "NYC001",
     name: "New York Office",
     description: "Manufacturing and headquarters",
-    createdAt: "2024-01-15"
+    createdAt: "2024-01-15",
+    pendingDocuments: 0
   },
   {
     id: "LA002",
     name: "Los Angeles Branch",
     description: "West coast operations",
-    createdAt: "2024-03-10"
+    createdAt: "2024-03-10",
+    pendingDocuments: 2
   },
   {
     id: "CHI003",
     name: "Chicago Division",
     description: "Midwest distribution center",
-    createdAt: "2024-05-22"
+    createdAt: "2024-05-22",
+    pendingDocuments: 1
   }
 ];
 
@@ -73,11 +76,8 @@ const BusinessSelect = () => {
       return;
     }
     
-    // In a real app, this would navigate to a business creation form
-    toast({
-      title: "Create business",
-      description: "Business creation would be implemented here."
-    });
+    // Navigate to business onboarding page
+    navigate("/business-onboarding");
   };
 
   return (
@@ -129,6 +129,13 @@ const BusinessSelect = () => {
                   <span className="text-xs text-app-slate-400">ID: {business.id}</span>
                   <span className="text-xs text-app-slate-400">Created: {business.createdAt}</span>
                 </div>
+                {business.pendingDocuments > 0 && (
+                  <div className="mt-2 pt-2 border-t border-app-slate-200">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                      {business.pendingDocuments} document{business.pendingDocuments !== 1 ? 's' : ''} pending
+                    </span>
+                  </div>
+                )}
               </div>
             ))}
           </div>
