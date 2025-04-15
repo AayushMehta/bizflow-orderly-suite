@@ -446,128 +446,131 @@ const ProductCatalog = () => {
         />
       </div>
       
-      <TabsContent value="list" className="m-0">
-        <div className="rounded-md border">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Image</TableHead>
-                <TableHead>Product Name</TableHead>
-                <TableHead>SKU</TableHead>
-                <TableHead>Category</TableHead>
-                <TableHead>Price</TableHead>
-                {hasPermission("edit", "business") && (
-                  <TableHead className="text-right">Actions</TableHead>
-                )}
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredProducts.length === 0 ? (
+      {/* Fix: Wrap both TabsContent components within the main Tabs component */}
+      <Tabs value={viewMode}>
+        <TabsContent value="list" className="m-0">
+          <div className="rounded-md border">
+            <Table>
+              <TableHeader>
                 <TableRow>
-                  <TableCell colSpan={hasPermission("edit", "business") ? 6 : 5} className="text-center text-muted-foreground py-8">
-                    No products found
-                  </TableCell>
+                  <TableHead>Image</TableHead>
+                  <TableHead>Product Name</TableHead>
+                  <TableHead>SKU</TableHead>
+                  <TableHead>Category</TableHead>
+                  <TableHead>Price</TableHead>
+                  {hasPermission("edit", "business") && (
+                    <TableHead className="text-right">Actions</TableHead>
+                  )}
                 </TableRow>
-              ) : (
-                filteredProducts.map(product => (
-                  <TableRow key={product.id}>
-                    <TableCell>
-                      <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
-                        <img
-                          src={product.imageUrl}
-                          alt={product.name}
-                          className="h-full w-full object-cover"
-                        />
+              </TableHeader>
+              <TableBody>
+                {filteredProducts.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={hasPermission("edit", "business") ? 6 : 5} className="text-center text-muted-foreground py-8">
+                      No products found
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredProducts.map(product => (
+                    <TableRow key={product.id}>
+                      <TableCell>
+                        <div className="h-10 w-10 rounded-md overflow-hidden bg-muted">
+                          <img
+                            src={product.imageUrl}
+                            alt={product.name}
+                            className="h-full w-full object-cover"
+                          />
+                        </div>
+                      </TableCell>
+                      <TableCell className="font-medium">{product.name}</TableCell>
+                      <TableCell>{product.sku}</TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{product.category}</Badge>
+                      </TableCell>
+                      <TableCell>${product.unitPrice.toFixed(2)}</TableCell>
+                      {hasPermission("edit", "business") && (
+                        <TableCell className="text-right">
+                          <div className="flex justify-end gap-2">
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              onClick={() => handleEditProduct(product)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon"
+                              className="text-destructive hover:text-destructive/90"
+                              onClick={() => handleDeleteProduct(product.id)}
+                            >
+                              <Trash className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      )}
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        </TabsContent>
+      
+        <TabsContent value="grid" className="m-0">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+            {filteredProducts.length === 0 ? (
+              <div className="col-span-full text-center text-muted-foreground py-8">
+                No products found
+              </div>
+            ) : (
+              filteredProducts.map(product => (
+                <Card key={product.id} className="overflow-hidden">
+                  <div className="aspect-video w-full overflow-hidden bg-muted">
+                    <img
+                      src={product.imageUrl}
+                      alt={product.name}
+                      className="h-full w-full object-cover transition-all hover:scale-105"
+                    />
+                  </div>
+                  <CardContent className="p-4">
+                    <div className="flex flex-col space-y-1.5">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold">{product.name}</h3>
+                        <Badge variant="outline">{product.category}</Badge>
                       </div>
-                    </TableCell>
-                    <TableCell className="font-medium">{product.name}</TableCell>
-                    <TableCell>{product.sku}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{product.category}</Badge>
-                    </TableCell>
-                    <TableCell>${product.unitPrice.toFixed(2)}</TableCell>
-                    {hasPermission("edit", "business") && (
-                      <TableCell className="text-right">
-                        <div className="flex justify-end gap-2">
+                      <div className="text-sm text-muted-foreground">{product.sku}</div>
+                      <div className="text-base font-semibold mt-2">${product.unitPrice.toFixed(2)}</div>
+                      
+                      {hasPermission("edit", "business") && (
+                        <div className="flex justify-end gap-2 pt-2">
                           <Button 
                             variant="ghost" 
-                            size="icon" 
+                            size="sm" 
                             onClick={() => handleEditProduct(product)}
                           >
-                            <Edit className="h-4 w-4" />
+                            <Edit className="h-4 w-4 mr-1" />
+                            Edit
                           </Button>
                           <Button 
                             variant="ghost" 
-                            size="icon"
+                            size="sm"
                             className="text-destructive hover:text-destructive/90"
                             onClick={() => handleDeleteProduct(product.id)}
                           >
-                            <Trash className="h-4 w-4" />
+                            <Trash className="h-4 w-4 mr-1" />
+                            Delete
                           </Button>
                         </div>
-                      </TableCell>
-                    )}
-                  </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
-      </TabsContent>
-      
-      <TabsContent value="grid" className="m-0">
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {filteredProducts.length === 0 ? (
-            <div className="col-span-full text-center text-muted-foreground py-8">
-              No products found
-            </div>
-          ) : (
-            filteredProducts.map(product => (
-              <Card key={product.id} className="overflow-hidden">
-                <div className="aspect-video w-full overflow-hidden bg-muted">
-                  <img
-                    src={product.imageUrl}
-                    alt={product.name}
-                    className="h-full w-full object-cover transition-all hover:scale-105"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <div className="flex flex-col space-y-1.5">
-                    <div className="flex items-center justify-between">
-                      <h3 className="text-lg font-semibold">{product.name}</h3>
-                      <Badge variant="outline">{product.category}</Badge>
+                      )}
                     </div>
-                    <div className="text-sm text-muted-foreground">{product.sku}</div>
-                    <div className="text-base font-semibold mt-2">${product.unitPrice.toFixed(2)}</div>
-                    
-                    {hasPermission("edit", "business") && (
-                      <div className="flex justify-end gap-2 pt-2">
-                        <Button 
-                          variant="ghost" 
-                          size="sm" 
-                          onClick={() => handleEditProduct(product)}
-                        >
-                          <Edit className="h-4 w-4 mr-1" />
-                          Edit
-                        </Button>
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          className="text-destructive hover:text-destructive/90"
-                          onClick={() => handleDeleteProduct(product.id)}
-                        >
-                          <Trash className="h-4 w-4 mr-1" />
-                          Delete
-                        </Button>
-                      </div>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            ))
-          )}
-        </div>
-      </TabsContent>
+                  </CardContent>
+                </Card>
+              ))
+            )}
+          </div>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
