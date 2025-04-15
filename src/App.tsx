@@ -29,6 +29,7 @@ import NotFound from "./pages/NotFound";
 import Index from "./pages/Index";
 import Teams from "./pages/Teams";
 import ProductCatalog from "./pages/ProductCatalog";
+import BusinessOnboarding from "./pages/BusinessOnboarding";
 
 const queryClient = new QueryClient();
 
@@ -71,6 +72,11 @@ const AppWithProvider = () => (
             <Route path="/select-business" element={
               <ProtectedRoute>
                 <BusinessSelect />
+              </ProtectedRoute>
+            } />
+            <Route path="/business-onboarding" element={
+              <ProtectedRoute requiredPermission="create" resourceType="business">
+                <BusinessOnboarding />
               </ProtectedRoute>
             } />
             <Route path="/" element={

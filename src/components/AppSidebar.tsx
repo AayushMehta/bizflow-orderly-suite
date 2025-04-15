@@ -23,7 +23,8 @@ import {
   LogOut,
   Building,
   Package,
-  UserPlus
+  UserPlus,
+  FolderPlus
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
@@ -137,9 +138,19 @@ const AppSidebar = () => {
         
         {hasPermission("view", "business") && (
           <SidebarGroup>
-            <SidebarGroupLabel>Settings</SidebarGroupLabel>
+            <SidebarGroupLabel>Business</SidebarGroupLabel>
             <SidebarGroupContent>
               <SidebarMenu>
+                {hasPermission("create", "business") && (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton asChild className={isActivePath("/business-onboarding") ? "bg-sidebar-accent" : ""}>
+                      <button onClick={() => navigate("/business-onboarding")}>
+                        <FolderPlus className="h-5 w-5" />
+                        <span>Business Onboarding</span>
+                      </button>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                )}
                 <SidebarMenuItem>
                   <SidebarMenuButton asChild className={isActivePath("/settings") ? "bg-sidebar-accent" : ""}>
                     <button onClick={() => navigate("/settings")}>

@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -41,7 +40,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 
-// Mock team members for demo
 const mockTeamMembers = [
   {
     id: "TM001",
@@ -85,7 +83,6 @@ const mockTeamMembers = [
   }
 ];
 
-// Mock businesses
 const mockBusinesses = [
   { id: "NYC001", name: "New York Office" },
   { id: "LA002", name: "Los Angeles Branch" },
@@ -99,8 +96,8 @@ const Teams = () => {
   const [teamMembers, setTeamMembers] = useState(mockTeamMembers);
   const [searchQuery, setSearchQuery] = useState("");
   const [isAddMemberOpen, setIsAddMemberOpen] = useState(false);
+  const [editingMember, setEditingMember] = useState<typeof mockTeamMembers[0] | null>(null);
   
-  // New member form state
   const [newMember, setNewMember] = useState({
     name: "",
     email: "",
@@ -108,14 +105,12 @@ const Teams = () => {
     businesses: [] as string[]
   });
   
-  // Filter team members based on search query
   const filteredMembers = teamMembers.filter(member => 
     member.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
     member.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
     member.role.toLowerCase().includes(searchQuery.toLowerCase())
   );
   
-  // Handle adding a new team member
   const handleAddMember = () => {
     if (!newMember.name || !newMember.email || !newMember.role || newMember.businesses.length === 0) {
       toast({
@@ -126,33 +121,65 @@ const Teams = () => {
       return;
     }
     
-    const newTeamMember = {
-      id: `TM${String(teamMembers.length + 1).padStart(3, '0')}`,
-      name: newMember.name,
-      email: newMember.email,
-      role: newMember.role as UserRole,
-      businesses: newMember.businesses,
-      status: "active"
-    };
+    if (editingMember) {
+      setTeamMembers(
+        teamMembers.map(member => 
+          member.id === editingMember.id 
+            ? {
+                ...member,
+                name: newMember.name,
+                email: newMember.email,
+                role: newMember.role as UserRole,
+                businesses: newMember.businesses
+              } 
+            : member
+        )
+      );
+      
+      toast({
+        title: "Team Member Updated",
+        description: `${newMember.name} has been updated.`
+      });
+    } else {
+      const newTeamMember = {
+        id: `TM${String(teamMembers.length + 1).padStart(3, '0')}`,
+        name: newMember.name,
+        email: newMember.email,
+        role: newMember.role as UserRole,
+        businesses: newMember.businesses,
+        status: "active"
+      };
+      
+      setTeamMembers([...teamMembers, newTeamMember]);
+      
+      toast({
+        title: "Team Member Added",
+        description: `${newMember.name} has been added to the team.`
+      });
+    }
     
-    setTeamMembers([...teamMembers, newTeamMember]);
     setIsAddMemberOpen(false);
+    setEditingMember(null);
     
-    // Reset form
     setNewMember({
       name: "",
       email: "",
       role: "",
       businesses: []
     });
-    
-    toast({
-      title: "Team Member Added",
-      description: `${newMember.name} has been added to the team.`
-    });
   };
   
-  // Handle changing a member's status
+  const handleEditMember = (member: typeof mockTeamMembers[0]) => {
+    setEditingMember(member);
+    setNewMember({
+      name: member.name,
+      email: member.email,
+      role: member.role,
+      businesses: member.businesses
+    });
+    setIsAddMemberOpen(true);
+  };
+  
   const handleStatusChange = (id: string, newStatus: string) => {
     setTeamMembers(
       teamMembers.map(member => 
@@ -170,7 +197,6 @@ const Teams = () => {
     });
   };
   
-  // Add or remove a business from the new member
   const toggleBusiness = (businessId: string) => {
     if (newMember.businesses.includes(businessId)) {
       setNewMember({
@@ -185,7 +211,16 @@ const Teams = () => {
     }
   };
   
-  // If user doesn't have permission, redirect to dashboard
+  const handleDialogClose = () => {
+    setNewMember({
+      name: "",
+      email: "",
+      role: "",
+      businesses: []
+    });
+    setEditingMember(null);
+  };
+  
   if (!hasPermission("view", "user")) {
     navigate("/dashboard");
     return null;
@@ -205,7 +240,13 @@ const Teams = () => {
         </div>
         
         {hasPermission("create", "user") && (
-          <Dialog open={isAddMemberOpen} onOpenChange={setIsAddMemberOpen}>
+          <Dialog 
+            open={isAddMemberOpen} 
+            onOpenChange={(open) => {
+              setIsAddMemberOpen(open);
+              if (!open) handleDialogClose();
+            }}
+          >
             <DialogTrigger asChild>
               <Button>
                 <UserPlus className="mr-2 h-4 w-4" />
@@ -214,9 +255,13 @@ const Teams = () => {
             </DialogTrigger>
             <DialogContent className="sm:max-w-md">
               <DialogHeader>
-                <DialogTitle>Add New Team Member</DialogTitle>
+                <DialogTitle>
+                  {editingMember ? "Edit Team Member" : "Add New Team Member"}
+                </DialogTitle>
                 <DialogDescription>
-                  Add a new member to your team and assign their role and business access.
+                  {editingMember 
+                    ? "Update team member details and access permissions." 
+                    : "Add a new member to your team and assign their role and business access."}
                 </DialogDescription>
               </DialogHeader>
               
@@ -296,7 +341,7 @@ const Teams = () => {
                   Cancel
                 </Button>
                 <Button onClick={handleAddMember}>
-                  Add Team Member
+                  {editingMember ? "Update Member" : "Add Team Member"}
                 </Button>
               </DialogFooter>
             </DialogContent>
@@ -371,7 +416,7 @@ const Teams = () => {
                   </TableCell>
                   <TableCell>
                     <Badge 
-                      variant={member.status === "active" ? "success" : "destructive"}
+                      variant={member.status === "active" ? "default" : "destructive"}
                       className={member.status === "active" ? "bg-green-100 text-green-800" : ""}
                     >
                       {member.status === "active" ? "Active" : "Inactive"}
@@ -379,33 +424,44 @@ const Teams = () => {
                   </TableCell>
                   {hasPermission("edit", "user") && (
                     <TableCell className="text-right">
-                      {user?.id !== member.id && (
-                        <Button 
-                          variant="ghost" 
-                          size="sm"
-                          onClick={() => handleStatusChange(
-                            member.id, 
-                            member.status === "active" ? "inactive" : "active"
-                          )}
-                          className={
-                            member.status === "active" 
-                              ? "text-destructive hover:text-destructive/90" 
-                              : "text-green-600 hover:text-green-700"
-                          }
-                        >
-                          {member.status === "active" ? (
-                            <>
-                              <X className="h-4 w-4 mr-1" />
-                              Deactivate
-                            </>
-                          ) : (
-                            <>
-                              <Check className="h-4 w-4 mr-1" />
-                              Activate
-                            </>
-                          )}
-                        </Button>
-                      )}
+                      <div className="flex justify-end gap-2">
+                        {user?.id !== member.id && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleStatusChange(
+                              member.id, 
+                              member.status === "active" ? "inactive" : "active"
+                            )}
+                            className={
+                              member.status === "active" 
+                                ? "text-destructive hover:text-destructive/90" 
+                                : "text-green-600 hover:text-green-700"
+                            }
+                          >
+                            {member.status === "active" ? (
+                              <>
+                                <X className="h-4 w-4 mr-1" />
+                                Deactivate
+                              </>
+                            ) : (
+                              <>
+                                <Check className="h-4 w-4 mr-1" />
+                                Activate
+                              </>
+                            )}
+                          </Button>
+                        )}
+                        {member.id !== user?.id && (
+                          <Button 
+                            variant="ghost" 
+                            size="sm"
+                            onClick={() => handleEditMember(member)}
+                          >
+                            Edit
+                          </Button>
+                        )}
+                      </div>
                     </TableCell>
                   )}
                 </TableRow>
