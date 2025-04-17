@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Building, Plus } from "lucide-react";
+import { Building, Plus, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
 import { useToast } from "@/components/ui/use-toast";
@@ -131,9 +131,19 @@ const BusinessSelect = () => {
                 </div>
                 {business.pendingDocuments > 0 && (
                   <div className="mt-2 pt-2 border-t border-app-slate-200">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
-                      {business.pendingDocuments} document{business.pendingDocuments !== 1 ? 's' : ''} pending
-                    </span>
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
+                        {business.pendingDocuments} document{business.pendingDocuments !== 1 ? 's' : ''} pending
+                      </span>
+                      <Button variant="ghost" size="sm" className="h-6 px-2" onClick={(e) => {
+                        e.stopPropagation();
+                        localStorage.setItem("selectedBusiness", JSON.stringify(business));
+                        navigate("/business-onboarding");
+                      }}>
+                        <FileText className="h-3 w-3 mr-1" />
+                        Upload
+                      </Button>
+                    </div>
                   </div>
                 )}
               </div>
