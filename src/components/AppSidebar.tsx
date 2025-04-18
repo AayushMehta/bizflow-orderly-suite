@@ -1,4 +1,3 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -143,7 +142,10 @@ const AppSidebar = () => {
               <SidebarMenu>
                 {hasPermission("create", "business") && (
                   <SidebarMenuItem>
-                    <SidebarMenuButton asChild className={isActivePath("/business-onboarding") ? "bg-sidebar-accent" : ""}>
+                    <SidebarMenuButton 
+                      asChild 
+                      className={isActivePath("/business-onboarding") ? "bg-sidebar-accent" : ""}
+                    >
                       <button onClick={() => navigate("/business-onboarding")}>
                         <FolderPlus className="h-5 w-5" />
                         <span>Business Onboarding</span>
@@ -152,7 +154,10 @@ const AppSidebar = () => {
                   </SidebarMenuItem>
                 )}
                 <SidebarMenuItem>
-                  <SidebarMenuButton asChild className={isActivePath("/settings") ? "bg-sidebar-accent" : ""}>
+                  <SidebarMenuButton 
+                    asChild 
+                    className={isActivePath("/settings") ? "bg-sidebar-accent" : ""}
+                  >
                     <button onClick={() => navigate("/settings")}>
                       <Settings className="h-5 w-5" />
                       <span>Business Settings</span>
