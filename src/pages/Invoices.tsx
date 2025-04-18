@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   Receipt, 
   ShoppingCart, 
@@ -73,6 +73,7 @@ const getStatusBadge = (status: string) => {
 const Invoices = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredInvoices, setFilteredInvoices] = useState(mockInvoices);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
@@ -88,6 +89,10 @@ const Invoices = () => {
     }
   }, [searchQuery]);
 
+  const handleAddInvoice = () => {
+    navigate("/invoices/new");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -102,7 +107,7 @@ const Invoices = () => {
               Purchase Orders
             </Link>
           </Button>
-          <Button>
+          <Button onClick={handleAddInvoice}>
             <Plus className="mr-2 h-4 w-4" />
             New Invoice
           </Button>

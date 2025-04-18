@@ -1,104 +1,74 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
 import { 
-  Settings, 
   Building, 
-  FileText, 
-  MapPin, 
+  User, 
   Mail, 
   Phone, 
-  Globe, 
-  Save,
-  Users,
-  CreditCard,
-  Bell
+  MapPin, 
+  FileText, 
+  CreditCard, 
+  Users, 
+  Settings, 
+  BookOpen,
+  Receipt,
+  Landmark,
+  Save
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { useToast } from "@/components/ui/use-toast";
+import { Label } from "@/components/ui/label";
+import {
+  Card,
+  CardContent,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import {
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Separator } from "@/components/ui/separator";
+import { Switch } from "@/components/ui/switch";
+import { useToast } from "@/components/ui/use-toast";
 
 const BusinessSettings = () => {
   const { toast } = useToast();
-  const [businessData, setBusinessData] = useState({
-    name: "New York Office",
-    description: "Manufacturing and headquarters",
-    businessId: "NYC001",
-    taxId: "TAX-12345678",
-    address: "123 Broadway, New York, NY 10001",
-    email: "nyc.office@example.com",
-    phone: "+1 (212) 555-7890",
-    website: "https://example.com/nyc",
-    logo: null
-  });
-
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target;
-    setBusinessData(prevData => ({
-      ...prevData,
-      [name]: value
-    }));
-  };
-
+  const [activeTab, setActiveTab] = useState("general");
+  
   const handleSave = () => {
-    // In a real app, you would save changes to the backend here
-    console.log("Saving business settings:", businessData);
-    
     toast({
       title: "Settings saved",
-      description: "Your business settings have been updated successfully.",
+      description: "Your business settings have been updated successfully."
     });
   };
-
+  
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
         <div>
           <h1 className="text-2xl font-bold text-app-slate-900">Business Settings</h1>
-          <p className="text-app-slate-500">Configure your business profile and preferences</p>
-        </div>
-        <div className="flex items-center gap-2">
-          <Button asChild variant="outline">
-            <Link to="/select-business">Switch Business</Link>
-          </Button>
+          <p className="text-app-slate-500">Manage your business profile and preferences</p>
         </div>
       </div>
-
-      <Tabs defaultValue="general" className="w-full">
-        <TabsList className="mb-4 bg-background border-b w-full justify-start rounded-none pb-0 h-auto">
-          <TabsTrigger value="general" className="rounded-b-none data-[state=active]:border-b-2 data-[state=active]:border-app-blue-600 data-[state=active]:shadow-none">
-            <Settings className="mr-2 h-4 w-4" />
-            General
-          </TabsTrigger>
-          <TabsTrigger value="billing" className="rounded-b-none data-[state=active]:border-b-2 data-[state=active]:border-app-blue-600 data-[state=active]:shadow-none">
-            <CreditCard className="mr-2 h-4 w-4" />
-            Billing & Taxes
-          </TabsTrigger>
-          <TabsTrigger value="team" className="rounded-b-none data-[state=active]:border-b-2 data-[state=active]:border-app-blue-600 data-[state=active]:shadow-none">
-            <Users className="mr-2 h-4 w-4" />
-            Team Access
-          </TabsTrigger>
-          <TabsTrigger value="notifications" className="rounded-b-none data-[state=active]:border-b-2 data-[state=active]:border-app-blue-600 data-[state=active]:shadow-none">
-            <Bell className="mr-2 h-4 w-4" />
-            Notifications
-          </TabsTrigger>
+      
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="grid grid-cols-4 sm:w-[600px] mb-6">
+          <TabsTrigger value="general">General</TabsTrigger>
+          <TabsTrigger value="financial">Financial</TabsTrigger>
+          <TabsTrigger value="documents">Documents</TabsTrigger>
+          <TabsTrigger value="users">User Access</TabsTrigger>
         </TabsList>
         
         <TabsContent value="general" className="space-y-4">
@@ -106,121 +76,136 @@ const BusinessSettings = () => {
             <CardHeader>
               <CardTitle>Business Information</CardTitle>
               <CardDescription>
-                Update your business details and contact information
+                Update your company details and contact information
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Business Name</Label>
-                  <div className="relative">
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <Label htmlFor="business-name">Business Name</Label>
+                  <div className="relative mt-1">
                     <Building className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input 
-                      id="name"
-                      name="name"
-                      value={businessData.name}
-                      onChange={handleInputChange}
-                      className="pl-10"
+                      id="business-name"
+                      className="pl-10" 
+                      placeholder="Enter business name" 
+                      defaultValue="Acme Corporation"
                     />
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="businessId">Business ID</Label>
-                  <Input 
-                    id="businessId"
-                    name="businessId"
-                    value={businessData.businessId}
-                    readOnly
-                    className="bg-muted"
-                  />
-                </div>
-              </div>
-              
-              <div className="space-y-2">
-                <Label htmlFor="description">Business Description</Label>
-                <Textarea 
-                  id="description"
-                  name="description"
-                  value={businessData.description}
-                  onChange={handleInputChange}
-                  rows={3}
-                />
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="taxId">Tax ID / VAT Number</Label>
-                  <div className="relative">
-                    <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input 
-                      id="taxId"
-                      name="taxId"
-                      value={businessData.taxId}
-                      onChange={handleInputChange}
-                      className="pl-10"
-                    />
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="contact-person">Contact Person</Label>
+                    <div className="relative mt-1">
+                      <User className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="contact-person"
+                        className="pl-10" 
+                        placeholder="Primary contact name" 
+                        defaultValue="John Smith"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="business-email">Business Email</Label>
+                    <div className="relative mt-1">
+                      <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="business-email"
+                        className="pl-10" 
+                        placeholder="Enter email address" 
+                        defaultValue="info@acme.com"
+                      />
+                    </div>
                   </div>
                 </div>
-              </div>
-              
-              <Separator />
-              
-              <div className="space-y-2">
-                <Label htmlFor="address">Address</Label>
-                <div className="relative">
-                  <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input 
-                    id="address"
-                    name="address"
-                    value={businessData.address}
-                    onChange={handleInputChange}
-                    className="pl-10"
-                  />
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="business-phone">Phone Number</Label>
+                    <div className="relative mt-1">
+                      <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="business-phone"
+                        className="pl-10" 
+                        placeholder="Enter phone number" 
+                        defaultValue="+1 (555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="tax-id">Tax ID / Business Number</Label>
+                    <div className="relative mt-1">
+                      <FileText className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                      <Input 
+                        id="tax-id"
+                        className="pl-10" 
+                        placeholder="Enter tax ID" 
+                        defaultValue="US-987654321"
+                      />
+                    </div>
+                  </div>
                 </div>
-              </div>
-              
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <div className="relative">
-                    <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                
+                <div>
+                  <Label htmlFor="business-address">Business Address</Label>
+                  <div className="relative mt-1">
+                    <MapPin className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                     <Input 
-                      id="email"
-                      name="email"
-                      type="email"
-                      value={businessData.email}
-                      onChange={handleInputChange}
-                      className="pl-10"
+                      id="business-address"
+                      className="pl-10" 
+                      placeholder="Enter business address" 
+                      defaultValue="123 Corporate Plaza, Suite 500"
                     />
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="phone">Phone</Label>
-                  <div className="relative">
-                    <Phone className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="city">City</Label>
                     <Input 
-                      id="phone"
-                      name="phone"
-                      value={businessData.phone}
-                      onChange={handleInputChange}
-                      className="pl-10"
+                      id="city"
+                      placeholder="City" 
+                      defaultValue="New York"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="state">State/Province</Label>
+                    <Input 
+                      id="state"
+                      placeholder="State/Province" 
+                      defaultValue="NY"
                     />
                   </div>
                 </div>
                 
-                <div className="space-y-2">
-                  <Label htmlFor="website">Website</Label>
-                  <div className="relative">
-                    <Globe className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="postal-code">Postal/ZIP Code</Label>
                     <Input 
-                      id="website"
-                      name="website"
-                      value={businessData.website}
-                      onChange={handleInputChange}
-                      className="pl-10"
+                      id="postal-code"
+                      placeholder="Postal/ZIP code" 
+                      defaultValue="10001"
                     />
+                  </div>
+                  
+                  <div>
+                    <Label htmlFor="country">Country</Label>
+                    <Select defaultValue="USA">
+                      <SelectTrigger id="country">
+                        <SelectValue placeholder="Select country" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="USA">United States</SelectItem>
+                        <SelectItem value="CAN">Canada</SelectItem>
+                        <SelectItem value="GBR">United Kingdom</SelectItem>
+                        <SelectItem value="AUS">Australia</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                 </div>
               </div>
@@ -234,74 +219,324 @@ const BusinessSettings = () => {
           </Card>
         </TabsContent>
         
-        <TabsContent value="billing" className="space-y-4">
+        <TabsContent value="financial" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Billing & Tax Settings</CardTitle>
+              <CardTitle>Financial Settings</CardTitle>
               <CardDescription>
-                Configure payment methods and tax calculation preferences
+                Configure payment methods, banking details and tax settings
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-8 text-center border rounded-lg">
-                <CreditCard className="h-12 w-12 mx-auto text-app-slate-300 mb-4" />
-                <h3 className="text-lg font-medium text-app-slate-900 mb-2">Billing Settings</h3>
-                <p className="text-app-slate-500 max-w-md mx-auto mb-6">
-                  Configure your default payment methods, billing address, and tax calculation preferences.
-                </p>
-                <Button variant="outline">
-                  Configure Billing Settings
-                </Button>
+              <div className="space-y-4">
+                <div>
+                  <Label htmlFor="currency">Default Currency</Label>
+                  <Select defaultValue="USD">
+                    <SelectTrigger id="currency">
+                      <SelectValue placeholder="Select currency" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="USD">US Dollar ($)</SelectItem>
+                      <SelectItem value="EUR">Euro (€)</SelectItem>
+                      <SelectItem value="GBP">British Pound (£)</SelectItem>
+                      <SelectItem value="CAD">Canadian Dollar (C$)</SelectItem>
+                      <SelectItem value="AUD">Australian Dollar (A$)</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                
+                <div>
+                  <Label htmlFor="tax-rate">Default Tax Rate (%)</Label>
+                  <Input 
+                    id="tax-rate"
+                    type="number" 
+                    min="0" 
+                    max="100" 
+                    defaultValue="8.5" 
+                  />
+                </div>
+                
+                <div>
+                  <Label>Banking Information</Label>
+                  <Card className="mt-2">
+                    <CardContent className="pt-6 space-y-4">
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                          <Label htmlFor="bank-name">Bank Name</Label>
+                          <div className="relative mt-1">
+                            <Landmark className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                            <Input 
+                              id="bank-name"
+                              className="pl-10" 
+                              placeholder="Enter bank name" 
+                              defaultValue="First National Bank"
+                            />
+                          </div>
+                        </div>
+                        
+                        <div>
+                          <Label htmlFor="account-number">Account Number</Label>
+                          <div className="relative mt-1">
+                            <CreditCard className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                            <Input 
+                              id="account-number"
+                              className="pl-10" 
+                              placeholder="Enter account number" 
+                              defaultValue="****4567"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="payment-instructions">Payment Instructions</Label>
+                        <Textarea 
+                          id="payment-instructions"
+                          placeholder="Enter payment instructions to include on invoices"
+                          className="min-h-[100px]"
+                          defaultValue="Please include the invoice number in your payment reference. All payments are due within 30 days."
+                        />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+                
+                <div className="flex items-center space-x-2 pt-2">
+                  <Switch id="auto-invoice" defaultChecked />
+                  <Label htmlFor="auto-invoice">Enable automatic invoice generation for new orders</Label>
+                </div>
               </div>
             </CardContent>
+            <CardFooter>
+              <Button onClick={handleSave}>
+                <Save className="mr-2 h-4 w-4" />
+                Save Financial Settings
+              </Button>
+            </CardFooter>
           </Card>
         </TabsContent>
         
-        <TabsContent value="team" className="space-y-4">
+        <TabsContent value="documents" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Team Access Control</CardTitle>
+              <CardTitle>Document Settings</CardTitle>
               <CardDescription>
-                Manage who has access to this business and their permissions
+                Configure document templates and branding
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-8 text-center border rounded-lg">
-                <Users className="h-12 w-12 mx-auto text-app-slate-300 mb-4" />
-                <h3 className="text-lg font-medium text-app-slate-900 mb-2">Team Access</h3>
-                <p className="text-app-slate-500 max-w-md mx-auto mb-6">
-                  Invite team members and set their permissions for this business entity.
-                </p>
-                <Button asChild>
-                  <Link to="/teams">
-                    Manage Team Members
-                  </Link>
-                </Button>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="invoice-prefix">Invoice Number Prefix</Label>
+                  <Input 
+                    id="invoice-prefix"
+                    placeholder="e.g., INV-" 
+                    defaultValue="INV-" 
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">Used for generating invoice numbers</p>
+                </div>
+                
+                <div>
+                  <Label htmlFor="quote-prefix">Quotation Number Prefix</Label>
+                  <Input 
+                    id="quote-prefix"
+                    placeholder="e.g., QT-" 
+                    defaultValue="QT-" 
+                  />
+                  <p className="text-sm text-muted-foreground mt-1">Used for generating quotation numbers</p>
+                </div>
+              </div>
+              
+              <div className="mt-4">
+                <Label>Upload Company Logo</Label>
+                <div className="mt-2 flex items-center gap-4">
+                  <div className="h-16 w-16 rounded bg-gray-100 flex items-center justify-center">
+                    <Building className="h-8 w-8 text-gray-400" />
+                  </div>
+                  <Button variant="outline">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Upload Logo
+                  </Button>
+                </div>
+                <p className="text-sm text-muted-foreground mt-2">Recommended size: 200x200px. Max file size: 2MB</p>
+              </div>
+              
+              <div className="mt-6 flex flex-col space-y-4">
+                <Label>Document Templates</Label>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="cursor-pointer hover:border-primary">
+                    <CardContent className="pt-6 text-center">
+                      <Receipt className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
+                      <CardTitle className="text-base mb-2">Invoice Template</CardTitle>
+                      <Button variant="outline" size="sm">
+                        Customize
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="cursor-pointer hover:border-primary">
+                    <CardContent className="pt-6 text-center">
+                      <FileText className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
+                      <CardTitle className="text-base mb-2">Quotation Template</CardTitle>
+                      <Button variant="outline" size="sm">
+                        Customize
+                      </Button>
+                    </CardContent>
+                  </Card>
+                  
+                  <Card className="cursor-pointer hover:border-primary">
+                    <CardContent className="pt-6 text-center">
+                      <BookOpen className="h-8 w-8 mx-auto text-muted-foreground mb-3" />
+                      <CardTitle className="text-base mb-2">Statement Template</CardTitle>
+                      <Button variant="outline" size="sm">
+                        Customize
+                      </Button>
+                    </CardContent>
+                  </Card>
+                </div>
               </div>
             </CardContent>
+            <CardFooter>
+              <Button onClick={handleSave}>
+                <Save className="mr-2 h-4 w-4" />
+                Save Document Settings
+              </Button>
+            </CardFooter>
           </Card>
         </TabsContent>
         
-        <TabsContent value="notifications" className="space-y-4">
+        <TabsContent value="users" className="space-y-4">
           <Card>
             <CardHeader>
-              <CardTitle>Notification Preferences</CardTitle>
+              <CardTitle>User Access</CardTitle>
               <CardDescription>
-                Configure how and when you receive notifications
+                Manage user access and permissions for this business
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="p-8 text-center border rounded-lg">
-                <Bell className="h-12 w-12 mx-auto text-app-slate-300 mb-4" />
-                <h3 className="text-lg font-medium text-app-slate-900 mb-2">Notification Settings</h3>
-                <p className="text-app-slate-500 max-w-md mx-auto mb-6">
-                  Choose which notifications you want to receive and how you want to receive them.
-                </p>
-                <Button variant="outline">
-                  Configure Notifications
+              <div className="flex justify-between items-center">
+                <h3 className="text-lg font-semibold">Team Members</h3>
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-2" />
+                  Add User
                 </Button>
               </div>
+              
+              <div className="border rounded-md">
+                <div className="grid grid-cols-5 gap-4 p-4 border-b bg-muted/50 font-medium">
+                  <div className="col-span-2">User</div>
+                  <div>Role</div>
+                  <div>Last Login</div>
+                  <div className="text-right">Actions</div>
+                </div>
+                
+                <div className="divide-y">
+                  <div className="grid grid-cols-5 gap-4 p-4 items-center">
+                    <div className="col-span-2 flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">Sarah Johnson</p>
+                        <p className="text-sm text-muted-foreground">sarah@example.com</p>
+                      </div>
+                    </div>
+                    <div>
+                      <Badge>Admin</Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground">Today, 10:34 AM</div>
+                    <div className="text-right">
+                      <Button variant="ghost" size="sm">
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                  
+                  <div className="grid grid-cols-5 gap-4 p-4 items-center">
+                    <div className="col-span-2 flex items-center gap-3">
+                      <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                        <User className="h-4 w-4 text-primary" />
+                      </div>
+                      <div>
+                        <p className="font-medium">Michael Chen</p>
+                        <p className="text-sm text-muted-foreground">michael@example.com</p>
+                      </div>
+                    </div>
+                    <div>
+                      <Badge variant="outline">Staff</Badge>
+                    </div>
+                    <div className="text-sm text-muted-foreground">Yesterday, 2:15 PM</div>
+                    <div className="text-right">
+                      <Button variant="ghost" size="sm">
+                        <Settings className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="mt-6">
+                <h3 className="text-lg font-semibold mb-4">Access Control</h3>
+                <div className="space-y-3">
+                  <div className="flex justify-between items-center p-3 border rounded-md">
+                    <div>
+                      <p className="font-medium">Invoicing Access</p>
+                      <p className="text-sm text-muted-foreground">Control who can create and edit invoices</p>
+                    </div>
+                    <Select defaultValue="admins">
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admins">Admins Only</SelectItem>
+                        <SelectItem value="staff">Staff & Admins</SelectItem>
+                        <SelectItem value="all">All Users</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex justify-between items-center p-3 border rounded-md">
+                    <div>
+                      <p className="font-medium">Client Management</p>
+                      <p className="text-sm text-muted-foreground">Control who can add and edit clients</p>
+                    </div>
+                    <Select defaultValue="staff">
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admins">Admins Only</SelectItem>
+                        <SelectItem value="staff">Staff & Admins</SelectItem>
+                        <SelectItem value="all">All Users</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div className="flex justify-between items-center p-3 border rounded-md">
+                    <div>
+                      <p className="font-medium">Financial Reports</p>
+                      <p className="text-sm text-muted-foreground">Control who can view financial reports</p>
+                    </div>
+                    <Select defaultValue="admins">
+                      <SelectTrigger className="w-[180px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="admins">Admins Only</SelectItem>
+                        <SelectItem value="staff">Staff & Admins</SelectItem>
+                        <SelectItem value="all">All Users</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </div>
             </CardContent>
+            <CardFooter>
+              <Button onClick={handleSave}>
+                <Save className="mr-2 h-4 w-4" />
+                Save User Settings
+              </Button>
+            </CardFooter>
           </Card>
         </TabsContent>
       </Tabs>

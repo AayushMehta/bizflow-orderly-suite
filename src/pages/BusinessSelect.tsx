@@ -80,6 +80,12 @@ const BusinessSelect = () => {
     navigate("/business-onboarding");
   };
 
+  const handleUploadDocuments = (business: any, e: React.MouseEvent) => {
+    e.stopPropagation();
+    localStorage.setItem("selectedBusiness", JSON.stringify(business));
+    navigate("/business-onboarding");
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-app-slate-50 p-4">
       <div className="w-full max-w-4xl bg-white rounded-lg shadow-md border border-app-slate-200 overflow-hidden">
@@ -135,11 +141,12 @@ const BusinessSelect = () => {
                       <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-yellow-100 text-yellow-800">
                         {business.pendingDocuments} document{business.pendingDocuments !== 1 ? 's' : ''} pending
                       </span>
-                      <Button variant="ghost" size="sm" className="h-6 px-2" onClick={(e) => {
-                        e.stopPropagation();
-                        localStorage.setItem("selectedBusiness", JSON.stringify(business));
-                        navigate("/business-onboarding");
-                      }}>
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="h-6 px-2" 
+                        onClick={(e) => handleUploadDocuments(business, e)}
+                      >
                         <FileText className="h-3 w-3 mr-1" />
                         Upload
                       </Button>

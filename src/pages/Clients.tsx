@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { 
   Users, 
   FileText, 
@@ -75,6 +75,7 @@ const getStatusBadge = (status: string) => {
 const Clients = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [filteredClients, setFilteredClients] = useState(mockClients);
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (searchQuery.trim() === "") {
@@ -90,6 +91,10 @@ const Clients = () => {
     }
   }, [searchQuery]);
 
+  const handleAddClient = () => {
+    navigate("/clients/new");
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-2 sm:space-y-0">
@@ -104,7 +109,7 @@ const Clients = () => {
               Create Quotation
             </Link>
           </Button>
-          <Button>
+          <Button onClick={handleAddClient}>
             <Plus className="mr-2 h-4 w-4" />
             Add Client
           </Button>
