@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -15,7 +16,7 @@ import {
   MapPin,
   Globe,
   UserCircle,
-  ArrowLeft  // Added ArrowLeft icon for back button
+  ArrowLeft
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
@@ -357,15 +358,26 @@ const BusinessOnboarding = () => {
   
   return (
     <div className="space-y-6 max-w-4xl mx-auto">
-      <div>
+      <div className="flex items-center justify-between">
+        <Button 
+          variant="ghost" 
+          size="sm" 
+          className="gap-1"
+          onClick={goBack}
+        >
+          <ArrowLeft className="h-4 w-4" />
+          Back
+        </Button>
         <h1 className="text-2xl font-bold flex items-center gap-2">
           <Building className="h-6 w-6 text-primary" />
           Business Onboarding
         </h1>
-        <p className="text-muted-foreground">
-          Complete the following steps to onboard your business
-        </p>
+        <div className="w-20"></div> {/* Empty div for balance */}
       </div>
+      
+      <p className="text-muted-foreground">
+        Complete the following steps to onboard your business
+      </p>
       
       <Progress value={calculateProgress()} className="h-2" />
       
@@ -935,4 +947,118 @@ const BusinessOnboarding = () => {
                           {businessDetails.address.street ? businessDetails.address.street + ", " : ""}
                           {businessDetails.address.city ? businessDetails.address.city + ", " : ""}
                           {businessDetails.address.state ? businessDetails.address.state + ", " : ""}
-                          {businessDetails.address.postalCode ? businessDetails.
+                          {businessDetails.address.postalCode ? businessDetails.address.postalCode + ", " : ""}
+                          {businessDetails.address.country || "Not provided"}
+                        </p>
+                      </div>
+                    </TabsContent>
+                    
+                    <TabsContent value="partners" className="space-y-4 mt-4">
+                      {partners.length > 0 ? (
+                        partners.map((partner, index) => (
+                          <div key={index} className="border rounded-md p-4">
+                            <h4 className="font-medium mb-2">Partner {index + 1}</h4>
+                            <div className="grid grid-cols-2 gap-4">
+                              <div>
+                                <h4 className="text-sm font-medium text-muted-foreground">Name</h4>
+                                <p>{partner.name || "Not provided"}</p>
+                              </div>
+                              
+                              <div>
+                                <h4 className="text-sm font-medium text-muted-foreground">Email</h4>
+                                <p>{partner.email || "Not provided"}</p>
+                              </div>
+                              
+                              <div>
+                                <h4 className="text-sm font-medium text-muted-foreground">Phone</h4>
+                                <p>{partner.phone || "Not provided"}</p>
+                              </div>
+                              
+                              <div>
+                                <h4 className="text-sm font-medium text-muted-foreground">Role</h4>
+                                <p>{partner.role || "Not provided"}</p>
+                              </div>
+                              
+                              <div>
+                                <h4 className="text-sm font-medium text-muted-foreground">Ownership</h4>
+                                <p>{partner.ownership ? `${partner.ownership}%` : "Not provided"}</p>
+                              </div>
+                            </div>
+                          </div>
+                        ))
+                      ) : (
+                        <p>No partners added</p>
+                      )}
+                    </TabsContent>
+                    
+                    <TabsContent value="documents" className="space-y-4 mt-4">
+                      <div className="space-y-2">
+                        {requiredDocuments.map(doc => (
+                          <div key={doc.id} className="flex items-center justify-between p-2 border-b">
+                            <div className="flex items-center gap-2">
+                              <FileText className="h-4 w-4 text-primary" />
+                              <span>{doc.name}</span>
+                              {doc.required && <Badge variant="default">Required</Badge>}
+                            </div>
+                            
+                            <div>
+                              {uploadedDocs[doc.id] ? (
+                                <div className="flex items-center gap-2">
+                                  <CheckCircle className="h-4 w-4 text-green-500" />
+                                  <span className="text-sm text-green-600">Uploaded</span>
+                                </div>
+                              ) : (
+                                <Badge variant="outline" className="text-red-500">
+                                  Not Uploaded
+                                </Badge>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </TabsContent>
+                  </Tabs>
+                </div>
+              )}
+            </CardContent>
+            
+            <CardFooter className="flex justify-between pt-6">
+              <Button
+                variant="outline"
+                onClick={prevStep}
+                disabled={currentStep === 0}
+                className="flex items-center gap-1"
+              >
+                <ChevronLeft className="h-4 w-4" />
+                Previous
+              </Button>
+              
+              {currentStep < onboardingSteps.length - 1 ? (
+                <Button
+                  onClick={nextStep}
+                  disabled={!isStepValid()}
+                  className="flex items-center gap-1"
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleSubmit}
+                  disabled={!isStepValid()}
+                  className="flex items-center gap-1"
+                >
+                  Submit Application
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              )}
+            </CardFooter>
+          </Card>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default BusinessOnboarding;
+
