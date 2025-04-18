@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -14,8 +15,7 @@ import {
   Phone,
   MapPin,
   Globe,
-  UserCircle,
-  ArrowLeft
+  UserCircle
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
@@ -33,7 +33,6 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/components/ui/use-toast";
 import { Progress } from "@/components/ui/progress";
-import { Breadcrumb, BreadcrumbItem, BreadcrumbLink } from "@/components/ui/breadcrumb";
 
 // Business onboarding steps
 const onboardingSteps = [
@@ -352,71 +351,51 @@ const BusinessOnboarding = () => {
   }
   
   return (
-    <div className="flex flex-col space-y-6">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center space-x-4">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => navigate("/dashboard")}
-          >
-            <ArrowLeft className="h-4 w-4" />
-          </Button>
-          <div>
-            <Breadcrumb>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/dashboard">Dashboard</BreadcrumbLink>
-              </BreadcrumbItem>
-              <BreadcrumbItem>
-                <BreadcrumbLink href="/business-onboarding">
-                  Business Onboarding
-                </BreadcrumbLink>
-              </BreadcrumbItem>
-            </Breadcrumb>
-            <h1 className="text-2xl font-bold flex items-center gap-2 mt-1">
-              <Building className="h-6 w-6 text-primary" />
-              Business Onboarding
-            </h1>
-          </div>
-        </div>
+    <div className="space-y-6 max-w-4xl mx-auto">
+      <div>
+        <h1 className="text-2xl font-bold flex items-center gap-2">
+          <Building className="h-6 w-6 text-primary" />
+          Business Onboarding
+        </h1>
+        <p className="text-muted-foreground">
+          Complete the following steps to onboard your business
+        </p>
       </div>
       
-      <div className="grid grid-cols-4 gap-6">
+      <Progress value={calculateProgress()} className="h-2" />
+      
+      <div className="grid grid-cols-4 gap-4">
         <div className="col-span-1">
-          <div className="sticky top-6 space-y-2">
+          <div className="space-y-2 sticky top-6">
             {onboardingSteps.map((step, index) => (
-              <Button
+              <div 
                 key={step.id}
-                variant={currentStep === index ? "default" : "ghost"}
-                className={`w-full justify-start text-left ${
+                className={`p-3 rounded-md flex items-center gap-2 cursor-pointer transition-colors ${
                   currentStep === index 
                     ? "bg-primary text-primary-foreground" 
                     : index < currentStep 
-                      ? "text-muted-foreground" 
-                      : ""
+                      ? "bg-muted text-muted-foreground" 
+                      : "bg-background text-foreground border"
                 }`}
                 onClick={() => {
+                  // Only allow navigating to completed steps or current step
                   if (index <= currentStep) {
                     setCurrentStep(index);
                   }
                 }}
               >
-                <div className="flex items-center gap-3">
-                  <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full border">
-                    {index < currentStep ? (
-                      <CheckCircle className="h-4 w-4" />
-                    ) : (
-                      <span>{index + 1}</span>
-                    )}
-                  </div>
-                  <div className="flex flex-col items-start">
-                    <span>{step.name}</span>
-                    <span className="text-xs text-muted-foreground">
-                      {step.description}
-                    </span>
-                  </div>
+                <div className="flex-shrink-0 w-6 h-6 flex items-center justify-center rounded-full border">
+                  {index < currentStep ? (
+                    <CheckCircle className="h-5 w-5" />
+                  ) : (
+                    <span>{index + 1}</span>
+                  )}
                 </div>
-              </Button>
+                <div>
+                  <div className="font-medium">{step.name}</div>
+                  <div className="text-xs hidden sm:block">{step.description}</div>
+                </div>
+              </div>
             ))}
           </div>
         </div>
