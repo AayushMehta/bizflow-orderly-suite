@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { 
@@ -15,7 +14,8 @@ import {
   Phone,
   MapPin,
   Globe,
-  UserCircle
+  UserCircle,
+  ArrowLeft  // Added ArrowLeft icon for back button
 } from "lucide-react";
 import { useUser } from "@/contexts/UserContext";
 import { Button } from "@/components/ui/button";
@@ -342,6 +342,11 @@ const BusinessOnboarding = () => {
       default:
         return false;
     }
+  };
+  
+  // Add a method to handle going back to the previous page
+  const goBack = () => {
+    navigate(-1);  // This navigates to the previous page in the browser history
   };
   
   // If user doesn't have permission, redirect to dashboard
@@ -930,113 +935,4 @@ const BusinessOnboarding = () => {
                           {businessDetails.address.street ? businessDetails.address.street + ", " : ""}
                           {businessDetails.address.city ? businessDetails.address.city + ", " : ""}
                           {businessDetails.address.state ? businessDetails.address.state + ", " : ""}
-                          {businessDetails.address.postalCode ? businessDetails.address.postalCode + ", " : ""}
-                          {businessDetails.address.country || ""}
-                        </p>
-                      </div>
-                    </TabsContent>
-                    
-                    <TabsContent value="partners" className="space-y-4 mt-4">
-                      {partners.map((partner, index) => (
-                        <div key={index} className="border rounded-md p-4">
-                          <h4 className="font-medium">Partner {index + 1}</h4>
-                          <div className="grid grid-cols-2 gap-4 mt-2">
-                            <div>
-                              <h5 className="text-sm font-medium text-muted-foreground">Name</h5>
-                              <p>{partner.name || "Not provided"}</p>
-                            </div>
-                            
-                            <div>
-                              <h5 className="text-sm font-medium text-muted-foreground">Email</h5>
-                              <p>{partner.email || "Not provided"}</p>
-                            </div>
-                            
-                            <div>
-                              <h5 className="text-sm font-medium text-muted-foreground">Phone</h5>
-                              <p>{partner.phone || "Not provided"}</p>
-                            </div>
-                            
-                            <div>
-                              <h5 className="text-sm font-medium text-muted-foreground">Role</h5>
-                              <p>{partner.role || "Not provided"}</p>
-                            </div>
-                            
-                            <div>
-                              <h5 className="text-sm font-medium text-muted-foreground">Ownership</h5>
-                              <p>{partner.ownership ? `${partner.ownership}%` : "Not provided"}</p>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </TabsContent>
-                    
-                    <TabsContent value="documents" className="space-y-2 mt-4">
-                      {requiredDocuments.map(doc => (
-                        <div key={doc.id} className="flex justify-between items-center border-b py-2">
-                          <div>
-                            <span className="font-medium">{doc.name}</span>
-                            {doc.required ? (
-                              <Badge variant="default" className="ml-2">Required</Badge>
-                            ) : (
-                              <Badge variant="outline" className="ml-2">Optional</Badge>
-                            )}
-                          </div>
-                          
-                          <div>
-                            {uploadedDocs[doc.id] ? (
-                              <Badge variant="outline" className="bg-green-50 text-green-700">
-                                <CheckCircle className="h-3 w-3 mr-1" />
-                                Uploaded
-                              </Badge>
-                            ) : (
-                              <Badge variant="outline" className="text-destructive">
-                                Missing
-                              </Badge>
-                            )}
-                          </div>
-                        </div>
-                      ))}
-                    </TabsContent>
-                  </Tabs>
-                  
-                  <div className="border-t pt-4 mt-4">
-                    <div className="flex items-center">
-                      <input type="checkbox" id="terms" className="mr-2" />
-                      <label htmlFor="terms" className="text-sm">
-                        I confirm all information provided is accurate and complete. I understand that providing false information may result in the rejection of my application.
-                      </label>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-            
-            <CardFooter className="flex justify-between border-t pt-6">
-              {currentStep > 0 ? (
-                <Button variant="outline" onClick={prevStep}>
-                  <ChevronLeft className="mr-2 h-4 w-4" />
-                  Previous
-                </Button>
-              ) : (
-                <div></div>
-              )}
-              
-              {currentStep < onboardingSteps.length - 1 ? (
-                <Button onClick={nextStep} disabled={!isStepValid()}>
-                  Next
-                  <ChevronRight className="ml-2 h-4 w-4" />
-                </Button>
-              ) : (
-                <Button onClick={handleSubmit}>
-                  Submit Application
-                </Button>
-              )}
-            </CardFooter>
-          </Card>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default BusinessOnboarding;
+                          {businessDetails.address.postalCode ? businessDetails.

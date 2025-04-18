@@ -165,9 +165,13 @@ const AppSidebar = () => {
         )}
       </SidebarContent>
       <SidebarFooter className="p-4">
-        <Button variant="outline" className="w-full justify-start text-sidebar-foreground" onClick={logout}>
+        <Button 
+          variant="outline" 
+          className="w-full justify-start text-sidebar-foreground group" 
+          onClick={logout}
+        >
           <LogOut className="mr-2 h-4 w-4" />
-          <span>Logout</span>
+          <span className="opacity-100 group-hover:opacity-100">Logout</span>
         </Button>
         <SidebarTrigger className="hidden md:flex mt-4 w-full" />
       </SidebarFooter>
