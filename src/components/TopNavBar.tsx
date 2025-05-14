@@ -6,7 +6,8 @@ import {
   User,
   ChevronDown,
   Building,
-  X
+  X,
+  Menu
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -25,10 +26,10 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { useUser } from "@/contexts/UserContext";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 type Notification = {
   id: string;
@@ -42,6 +43,8 @@ type Notification = {
 const TopNavBar = () => {
   const navigate = useNavigate();
   const { user, logout } = useUser();
+  const isMobile = useIsMobile();
+  
   const [currentBusiness, setCurrentBusiness] = useState(() => {
     const stored = localStorage.getItem("selectedBusiness");
     return stored ? JSON.parse(stored) : { id: "", name: "No Business Selected" };
@@ -127,15 +130,17 @@ const TopNavBar = () => {
   };
 
   return (
-    <div className="h-16 px-4 border-b bg-white flex items-center justify-between">
+    <div className="h-14 md:h-16 px-2 md:px-4 border-b bg-white flex items-center justify-between shadow-sm">
       <div className="flex items-center">
-        <SidebarTrigger className="md:hidden mr-4" />
+        <SidebarTrigger className="sidebar-trigger mr-2 flex md:hidden">
+          <Menu className="h-5 w-5" />
+        </SidebarTrigger>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-2">
-              <Building className="h-4 w-4" />
-              {currentBusiness.name}
-              <ChevronDown className="h-4 w-4" />
+            <Button variant="outline" className="gap-1 md:gap-2 text-xs md:text-sm">
+              <Building className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="truncate max-w-[90px] md:max-w-[150px]">{currentBusiness.name}</span>
+              <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="start" className="w-[220px]">
@@ -162,20 +167,20 @@ const TopNavBar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 md:gap-4">
         <Dialog open={showNotifications} onOpenChange={setShowNotifications}>
           <Button 
             variant="ghost" 
-            size="icon" 
+            size={isMobile ? "sm" : "icon"} 
             className="relative"
             onClick={() => setShowNotifications(true)}
           >
-            <Bell className="h-5 w-5" />
+            <Bell className="h-4 w-4 md:h-5 md:w-5" />
             {unreadCount > 0 && (
               <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
             )}
           </Button>
-          <DialogContent className="sm:max-w-md">
+          <DialogContent className="sm:max-w-md max-h-[90vh] overflow-hidden">
             <DialogHeader>
               <DialogTitle>Notifications</DialogTitle>
               <DialogDescription>
@@ -190,7 +195,7 @@ const TopNavBar = () => {
                 </Button>
               )}
             </div>
-            <ScrollArea className="h-[300px] mt-2">
+            <ScrollArea className="h-[50vh] mt-2">
               {notifications.length === 0 ? (
                 <div className="text-center py-4 text-muted-foreground">
                   No notifications
@@ -231,10 +236,10 @@ const TopNavBar = () => {
         </Dialog>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="gap-2">
-              <User className="h-5 w-5" />
-              {user?.name}
-              <ChevronDown className="h-4 w-4" />
+            <Button variant="ghost" className="gap-1 md:gap-2 text-xs md:text-sm">
+              <User className="h-4 w-4 md:h-5 md:w-5" />
+              {!isMobile && <span className="truncate max-w-[80px] md:max-w-[120px]">{user?.name}</span>}
+              <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">

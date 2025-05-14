@@ -92,36 +92,44 @@
 
   body {
     @apply bg-background text-foreground;
+    -webkit-tap-highlight-color: transparent;
+    overscroll-behavior: none;
+  }
+
+  /* Mobile touch improvements */
+  button, a, input, select, textarea {
+    @apply touch-manipulation;
   }
 }
 
+/* Mobile-first utility classes */
 @layer components {
   .app-title {
-    @apply text-2xl font-bold text-app-blue-800;
+    @apply text-xl md:text-2xl font-bold text-app-blue-800;
   }
   
   .app-container {
-    @apply w-full max-w-7xl mx-auto p-4;
+    @apply w-full max-w-full md:max-w-7xl mx-auto p-2 md:p-4;
   }
   
   .app-card {
-    @apply bg-white rounded-lg shadow-md p-6 border border-app-slate-200;
+    @apply bg-white rounded-lg shadow-md p-3 md:p-6 border border-app-slate-200;
   }
   
   .app-table {
-    @apply w-full border-collapse;
+    @apply w-full border-collapse text-sm md:text-base;
   }
   
   .app-table th {
-    @apply bg-app-slate-100 text-left p-3 font-medium text-app-slate-700;
+    @apply bg-app-slate-100 text-left p-2 md:p-3 font-medium text-app-slate-700;
   }
   
   .app-table td {
-    @apply border-t border-app-slate-200 p-3;
+    @apply border-t border-app-slate-200 p-2 md:p-3;
   }
   
   .app-badge {
-    @apply inline-flex items-center rounded-full px-2.5 py-1 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-2 py-0.5 md:px-2.5 md:py-1 text-xs font-medium;
   }
   
   .app-badge-blue {
@@ -142,5 +150,25 @@
   
   .app-badge-gray {
     @apply app-badge bg-app-slate-100 text-app-slate-800;
+  }
+
+  /* Mobile optimized form controls */
+  .form-input {
+    @apply h-10 md:h-11 px-3 py-2 rounded-md text-base;
+  }
+
+  /* Responsive grid layouts */
+  .responsive-grid {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4;
+  }
+
+  /* Responsive flexbox layouts */
+  .responsive-flex {
+    @apply flex flex-col sm:flex-row gap-2 md:gap-4;
+  }
+  
+  /* Touch target size improvements */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
   }
 }

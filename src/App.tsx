@@ -1,179 +1,82 @@
 
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Toaster } from "@/components/ui/sonner";
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { UserProvider } from "@/contexts/UserContext";
+import AppLayout from '@/layouts/AppLayout';
 
-import { UserProvider, useUser } from "./contexts/UserContext";
-import AppLayout from "./layouts/AppLayout";
-import Dashboard from "./pages/Dashboard";
-import BusinessSelect from "./pages/BusinessSelect";
-import Quotations from "./pages/Quotations";
-import QuotationDetail from "./pages/QuotationDetail";
-import QuotationForm from "./pages/QuotationForm";
-import PurchaseOrders from "./pages/PurchaseOrders";
-import PurchaseOrderDetail from "./pages/PurchaseOrderDetail";
-import PurchaseOrderForm from "./pages/PurchaseOrderForm";
-import Invoices from "./pages/Invoices";
-import InvoiceDetail from "./pages/InvoiceDetail";
-import InvoiceForm from "./pages/InvoiceForm";
-import Clients from "./pages/Clients";
-import ClientDetail from "./pages/ClientDetail";
-import ClientForm from "./pages/ClientForm";
-import BusinessSettings from "./pages/BusinessSettings";
-import Profile from "./pages/Profile";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import NotFound from "./pages/NotFound";
-import Index from "./pages/Index";
-import Teams from "./pages/Teams";
-import ProductCatalog from "./pages/ProductCatalog";
-import BusinessOnboarding from "./pages/BusinessOnboarding";
+// Pages
+import Index from '@/pages/Index';
+import Login from '@/pages/Login';
+import Register from '@/pages/Register';
+import Dashboard from '@/pages/Dashboard';
+import Quotations from '@/pages/Quotations';
+import QuotationDetail from '@/pages/QuotationDetail';
+import QuotationForm from '@/pages/QuotationForm';
+import PurchaseOrders from '@/pages/PurchaseOrders';
+import PurchaseOrderDetail from '@/pages/PurchaseOrderDetail';
+import PurchaseOrderForm from '@/pages/PurchaseOrderForm';
+import Invoices from '@/pages/Invoices';
+import InvoiceDetail from '@/pages/InvoiceDetail';
+import InvoiceForm from '@/pages/InvoiceForm';
+import Clients from '@/pages/Clients';
+import ClientDetail from '@/pages/ClientDetail';
+import ClientForm from '@/pages/ClientForm';
+import ProductCatalog from '@/pages/ProductCatalog';
+import Profile from '@/pages/Profile';
+import Teams from '@/pages/Teams';
+import BusinessOnboarding from '@/pages/BusinessOnboarding';
+import BusinessSelect from '@/pages/BusinessSelect';
+import BusinessSettings from '@/pages/BusinessSettings';
+import NotFound from '@/pages/NotFound';
 
+// Create a client
 const queryClient = new QueryClient();
 
-// Protected route component
-const ProtectedRoute = ({ children, requiredPermission, resourceType }: { 
-  children: React.ReactNode, 
-  requiredPermission?: "view" | "edit" | "create" | "delete",
-  resourceType?: string
-}) => {
-  const { user, isLoading, hasPermission } = useUser();
-  
-  if (isLoading) {
-    return <div>Loading...</div>;
-  }
-  
-  if (!user) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  // If permission check is required and user doesn't have permission
-  if (requiredPermission && resourceType && !hasPermission(requiredPermission, resourceType)) {
-    return <Navigate to="/dashboard" replace />;
-  }
-  
-  return <>{children}</>;
-};
-
-// App with UserProvider
-const AppWithProvider = () => (
-  <QueryClientProvider client={queryClient}>
-    <BrowserRouter>
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
       <UserProvider>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
+        <BrowserRouter>
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
-            <Route path="/select-business" element={
-              <ProtectedRoute>
-                <BusinessSelect />
-              </ProtectedRoute>
-            } />
-            <Route path="/business-onboarding" element={
-              <ProtectedRoute requiredPermission="create" resourceType="business">
-                <BusinessOnboarding />
-              </ProtectedRoute>
-            } />
-            <Route path="/" element={
-              <ProtectedRoute>
-                <AppLayout />
-              </ProtectedRoute>
-            }>
-              <Route path="dashboard" element={<Dashboard />} />
-              <Route path="quotations" element={
-                <ProtectedRoute requiredPermission="view" resourceType="quotation">
-                  <Quotations />
-                </ProtectedRoute>
-              } />
-              <Route path="quotations/new" element={
-                <ProtectedRoute requiredPermission="create" resourceType="quotation">
-                  <QuotationForm />
-                </ProtectedRoute>
-              } />
-              <Route path="quotations/:id" element={
-                <ProtectedRoute requiredPermission="view" resourceType="quotation">
-                  <QuotationDetail />
-                </ProtectedRoute>
-              } />
-              <Route path="purchase-orders" element={
-                <ProtectedRoute requiredPermission="view" resourceType="purchase-order">
-                  <PurchaseOrders />
-                </ProtectedRoute>
-              } />
-              <Route path="purchase-orders/new" element={
-                <ProtectedRoute requiredPermission="create" resourceType="purchase-order">
-                  <PurchaseOrderForm />
-                </ProtectedRoute>
-              } />
-              <Route path="purchase-orders/:id" element={
-                <ProtectedRoute requiredPermission="view" resourceType="purchase-order">
-                  <PurchaseOrderDetail />
-                </ProtectedRoute>
-              } />
-              <Route path="invoices" element={
-                <ProtectedRoute requiredPermission="view" resourceType="invoice">
-                  <Invoices />
-                </ProtectedRoute>
-              } />
-              <Route path="invoices/new" element={
-                <ProtectedRoute requiredPermission="create" resourceType="invoice">
-                  <InvoiceForm />
-                </ProtectedRoute>
-              } />
-              <Route path="invoices/:id" element={
-                <ProtectedRoute requiredPermission="view" resourceType="invoice">
-                  <InvoiceDetail />
-                </ProtectedRoute>
-              } />
-              <Route path="clients" element={
-                <ProtectedRoute requiredPermission="view" resourceType="client">
-                  <Clients />
-                </ProtectedRoute>
-              } />
-              <Route path="clients/new" element={
-                <ProtectedRoute requiredPermission="create" resourceType="client">
-                  <ClientForm />
-                </ProtectedRoute>
-              } />
-              <Route path="clients/:id" element={
-                <ProtectedRoute requiredPermission="view" resourceType="client">
-                  <ClientDetail />
-                </ProtectedRoute>
-              } />
-              <Route path="settings" element={
-                <ProtectedRoute requiredPermission="view" resourceType="business">
-                  <BusinessSettings />
-                </ProtectedRoute>
-              } />
-              <Route path="profile" element={
-                <ProtectedRoute>
-                  <Profile />
-                </ProtectedRoute>
-              } />
-              <Route path="teams" element={
-                <ProtectedRoute requiredPermission="view" resourceType="user">
-                  <Teams />
-                </ProtectedRoute>
-              } />
-              <Route path="products" element={
-                <ProtectedRoute requiredPermission="view" resourceType="product">
-                  <ProductCatalog />
-                </ProtectedRoute>
-              } />
+            
+            {/* Protected routes */}
+            <Route path="/" element={<AppLayout />}>
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/quotations" element={<Quotations />} />
+              <Route path="/quotations/:id" element={<QuotationDetail />} />
+              <Route path="/quotations/new" element={<QuotationForm />} />
+              <Route path="/quotations/edit/:id" element={<QuotationForm />} />
+              <Route path="/purchase-orders" element={<PurchaseOrders />} />
+              <Route path="/purchase-orders/:id" element={<PurchaseOrderDetail />} />
+              <Route path="/purchase-orders/new" element={<PurchaseOrderForm />} />
+              <Route path="/purchase-orders/edit/:id" element={<PurchaseOrderForm />} />
+              <Route path="/invoices" element={<Invoices />} />
+              <Route path="/invoices/:id" element={<InvoiceDetail />} />
+              <Route path="/invoices/new" element={<InvoiceForm />} />
+              <Route path="/invoices/edit/:id" element={<InvoiceForm />} />
+              <Route path="/clients" element={<Clients />} />
+              <Route path="/clients/:id" element={<ClientDetail />} />
+              <Route path="/clients/new" element={<ClientForm />} />
+              <Route path="/clients/edit/:id" element={<ClientForm />} />
+              <Route path="/products" element={<ProductCatalog />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/teams" element={<Teams />} />
+              <Route path="/business-onboarding" element={<BusinessOnboarding />} />
+              <Route path="/select-business" element={<BusinessSelect />} />
+              <Route path="/settings" element={<BusinessSettings />} />
             </Route>
+            
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </TooltipProvider>
+        </BrowserRouter>
+        <Toaster position="top-right" closeButton richColors />
       </UserProvider>
-    </BrowserRouter>
-  </QueryClientProvider>
-);
-
-const App = () => <AppWithProvider />;
+    </QueryClientProvider>
+  );
+}
 
 export default App;
