@@ -16,9 +16,9 @@ const AppLayout = () => {
   }, []);
 
   return (
-    <SidebarProvider defaultCollapsed={isMobile && !initialLoad}>
+    <SidebarProvider>
       <div className="min-h-screen flex w-full flex-col md:flex-row">
-        <AppSidebar />
+        <AppSidebar collapsed={isMobile && !initialLoad} />
         <div className="flex-1 flex flex-col overflow-hidden">
           <TopNavBar />
           <main className="flex-1 overflow-y-auto p-2 md:p-4">
