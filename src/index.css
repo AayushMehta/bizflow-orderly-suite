@@ -105,7 +105,7 @@
 /* Mobile-first utility classes */
 @layer components {
   .app-title {
-    @apply text-xl md:text-2xl font-bold text-app-blue-800;
+    @apply text-lg md:text-2xl font-bold text-app-blue-800;
   }
   
   .app-container {
@@ -113,23 +113,23 @@
   }
   
   .app-card {
-    @apply bg-white rounded-lg shadow-md p-3 md:p-6 border border-app-slate-200;
+    @apply bg-white rounded-lg shadow-sm p-3 md:p-6 border border-app-slate-200;
   }
   
   .app-table {
-    @apply w-full border-collapse text-sm md:text-base;
+    @apply w-full border-collapse text-sm;
   }
   
   .app-table th {
-    @apply bg-app-slate-100 text-left p-2 md:p-3 font-medium text-app-slate-700;
+    @apply bg-app-slate-100 text-left p-2 font-medium text-app-slate-700;
   }
   
   .app-table td {
-    @apply border-t border-app-slate-200 p-2 md:p-3;
+    @apply border-t border-app-slate-200 p-2;
   }
   
   .app-badge {
-    @apply inline-flex items-center rounded-full px-2 py-0.5 md:px-2.5 md:py-1 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
   }
   
   .app-badge-blue {
@@ -154,21 +154,50 @@
 
   /* Mobile optimized form controls */
   .form-input {
-    @apply h-10 md:h-11 px-3 py-2 rounded-md text-base;
+    @apply h-10 px-3 py-2 rounded-md text-sm;
   }
 
   /* Responsive grid layouts */
   .responsive-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4;
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3;
   }
 
   /* Responsive flexbox layouts */
   .responsive-flex {
-    @apply flex flex-col sm:flex-row gap-2 md:gap-4;
+    @apply flex flex-col sm:flex-row gap-2;
   }
   
   /* Touch target size improvements */
   .touch-target {
     @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
+  }
+  
+  /* Mobile bottom navigation */
+  .mobile-bottom-nav {
+    @apply fixed bottom-0 left-0 right-0 bg-white border-t flex items-center justify-around py-2 sm:hidden z-50;
+  }
+  
+  .mobile-nav-item {
+    @apply flex flex-col items-center justify-center p-2 rounded-md;
+  }
+  
+  /* Mobile-optimized cards */
+  .mobile-card {
+    @apply rounded-lg border shadow-sm p-3 bg-white mb-3;
+  }
+  
+  /* Mobile list items */
+  .mobile-list-item {
+    @apply flex items-center p-3 border-b last:border-b-0;
+  }
+  
+  /* Mobile content container with proper padding */
+  .mobile-container {
+    @apply px-3 py-2 md:px-6 md:py-4;
+  }
+  
+  /* Floating action button for mobile */
+  .fab {
+    @apply fixed bottom-16 right-4 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-50;
   }
 }

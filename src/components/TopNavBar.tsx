@@ -119,7 +119,7 @@ const TopNavBar = () => {
   const getRoleBadge = () => {
     switch (user?.role) {
       case "admin":
-        return <Badge className="bg-purple-100 text-purple-700 border-purple-200">Administrator</Badge>;
+        return <Badge className="bg-purple-100 text-purple-700 border-purple-200">Admin</Badge>;
       case "partner":
         return <Badge className="bg-blue-100 text-blue-700 border-blue-200">Partner</Badge>;
       case "data-entry":
@@ -130,20 +130,20 @@ const TopNavBar = () => {
   };
 
   return (
-    <div className="h-14 md:h-16 px-2 md:px-4 border-b bg-white flex items-center justify-between shadow-sm">
+    <div className="h-14 border-b bg-white flex items-center justify-between shadow-sm px-3">
       <div className="flex items-center">
         <SidebarTrigger className="sidebar-trigger mr-2 flex md:hidden">
           <Menu className="h-5 w-5" />
         </SidebarTrigger>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-1 md:gap-2 text-xs md:text-sm">
+            <Button variant="outline" className="gap-1 text-xs">
               <Building className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="truncate max-w-[90px] md:max-w-[150px]">{currentBusiness.name}</span>
-              <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
+              <span className="truncate max-w-[80px] md:max-w-[120px]">{currentBusiness.name}</span>
+              <ChevronDown className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-[220px]">
+          <DropdownMenuContent align="start" className="w-[200px]">
             <DropdownMenuLabel>Switch Business</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {businesses.map((business) => (
@@ -153,10 +153,10 @@ const TopNavBar = () => {
                 className={business.id === currentBusiness.id ? "bg-muted" : ""}
               >
                 <span className="flex items-center gap-2">
-                  <Badge variant="outline" className="font-mono">
+                  <Badge variant="outline" className="font-mono text-xs">
                     {business.id}
                   </Badge>
-                  {business.name}
+                  <span className="truncate">{business.name}</span>
                 </span>
               </DropdownMenuItem>
             ))}
@@ -167,15 +167,15 @@ const TopNavBar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center gap-2 md:gap-4">
+      <div className="flex items-center gap-2">
         <Dialog open={showNotifications} onOpenChange={setShowNotifications}>
           <Button 
             variant="ghost" 
-            size={isMobile ? "sm" : "icon"} 
+            size="sm"
             className="relative"
             onClick={() => setShowNotifications(true)}
           >
-            <Bell className="h-4 w-4 md:h-5 md:w-5" />
+            <Bell className="h-4 w-4" />
             {unreadCount > 0 && (
               <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
             )}
@@ -184,11 +184,11 @@ const TopNavBar = () => {
             <DialogHeader>
               <DialogTitle>Notifications</DialogTitle>
               <DialogDescription>
-                Recent system notifications and updates
+                Recent system notifications
               </DialogDescription>
             </DialogHeader>
             <div className="flex justify-between items-center my-2">
-              <span className="text-sm">{unreadCount} unread notification{unreadCount !== 1 ? 's' : ''}</span>
+              <span className="text-sm">{unreadCount} unread</span>
               {unreadCount > 0 && (
                 <Button variant="ghost" size="sm" onClick={markAllAsRead}>
                   Mark all as read
@@ -236,10 +236,10 @@ const TopNavBar = () => {
         </Dialog>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="gap-1 md:gap-2 text-xs md:text-sm">
-              <User className="h-4 w-4 md:h-5 md:w-5" />
-              {!isMobile && <span className="truncate max-w-[80px] md:max-w-[120px]">{user?.name}</span>}
-              <ChevronDown className="h-3 w-3 md:h-4 md:w-4" />
+            <Button variant="ghost" size="sm" className="gap-1">
+              <User className="h-4 w-4" />
+              {!isMobile && <span className="truncate max-w-[80px]">{user?.name}</span>}
+              <ChevronDown className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="w-[200px]">

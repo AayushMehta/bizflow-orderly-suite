@@ -21,7 +21,7 @@ const AppLayout = () => {
         <AppSidebar collapsed={isMobile && !initialLoad} />
         <div className="flex-1 flex flex-col overflow-hidden">
           <TopNavBar />
-          <main className="flex-1 overflow-y-auto p-2 md:p-4">
+          <main className="flex-1 overflow-y-auto p-3 md:p-4">
             <Outlet />
           </main>
         </div>

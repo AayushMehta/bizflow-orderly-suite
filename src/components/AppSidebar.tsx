@@ -1,3 +1,4 @@
+
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -57,11 +58,15 @@ const AppSidebar = ({ collapsed }: AppSidebarProps) => {
   };
 
   return (
-    <Sidebar className="z-40" defaultCollapsed={collapsed}>
-      <SidebarHeader className="p-4">
+    <Sidebar 
+      className="z-40" 
+      // We need to use the collapsed state prop directly instead of defaultCollapsed
+      collapsible={isMobile ? "offcanvas" : "icon"}
+    >
+      <SidebarHeader className="p-3">
         <div className="flex items-center space-x-2">
-          <Building className="h-6 w-6 text-sidebar-primary" />
-          <span className="text-lg font-bold text-white">BizFlow</span>
+          <Building className="h-5 w-5 text-sidebar-primary" />
+          <span className="text-base font-bold text-white">BizFlow</span>
         </div>
       </SidebarHeader>
       <SidebarContent>
@@ -127,7 +132,7 @@ const AppSidebar = ({ collapsed }: AppSidebarProps) => {
                   <SidebarMenuButton asChild className={isActivePath("/products") ? "bg-sidebar-accent" : ""}>
                     <button onClick={() => handleNavigation("/products")}>
                       <Package className="h-5 w-5" />
-                      <span>Product Catalog</span>
+                      <span>Products</span>
                     </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -173,7 +178,7 @@ const AppSidebar = ({ collapsed }: AppSidebarProps) => {
                   <SidebarMenuButton asChild className={isActivePath("/settings") ? "bg-sidebar-accent" : ""}>
                     <button onClick={() => handleNavigation("/settings")}>
                       <Settings className="h-5 w-5" />
-                      <span>Business Settings</span>
+                      <span>Settings</span>
                     </button>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
@@ -182,7 +187,7 @@ const AppSidebar = ({ collapsed }: AppSidebarProps) => {
           </SidebarGroup>
         )}
       </SidebarContent>
-      <SidebarFooter className="p-4">
+      <SidebarFooter className="p-3">
         <Button 
           variant="outline" 
           className="w-full justify-start text-sidebar-foreground" 
@@ -191,7 +196,7 @@ const AppSidebar = ({ collapsed }: AppSidebarProps) => {
           <LogOut className="mr-2 h-4 w-4" />
           <span>Logout</span>
         </Button>
-        <SidebarTrigger className="sidebar-trigger w-full mt-4 hidden md:flex" />
+        <SidebarTrigger className="sidebar-trigger w-full mt-3 hidden md:flex" />
       </SidebarFooter>
     </Sidebar>
   );
