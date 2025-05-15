@@ -1,4 +1,3 @@
-
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   Sidebar,
@@ -30,7 +29,11 @@ import { Button } from "@/components/ui/button";
 import { useUser } from "@/contexts/UserContext";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-const AppSidebar = () => {
+interface AppSidebarProps {
+  collapsed?: boolean;
+}
+
+const AppSidebar = ({ collapsed }: AppSidebarProps) => {
   const navigate = useNavigate();
   const location = useLocation();
   const { user, logout, hasPermission } = useUser();
@@ -54,7 +57,7 @@ const AppSidebar = () => {
   };
 
   return (
-    <Sidebar className="z-40">
+    <Sidebar className="z-40" defaultCollapsed={collapsed}>
       <SidebarHeader className="p-4">
         <div className="flex items-center space-x-2">
           <Building className="h-6 w-6 text-sidebar-primary" />
