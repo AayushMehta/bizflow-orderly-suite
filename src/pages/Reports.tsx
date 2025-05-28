@@ -62,66 +62,66 @@ const Reports = () => {
   };
 
   return (
-    <div className="mobile-container space-y-4">
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
-        <div>
-          <h1 className="app-title">Business Reports</h1>
-          <p className="text-sm text-muted-foreground">Comprehensive business analytics and insights</p>
+    <div className="mobile-container space-y-6 pb-6">
+      <div className="flex flex-col space-y-4">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+          <div>
+            <h1 className="app-title">Business Reports</h1>
+            <p className="text-sm text-muted-foreground mt-1">Comprehensive business analytics and insights</p>
+          </div>
+          <div className="flex gap-2 w-full sm:w-auto">
+            <Button variant="outline" size="sm" className="touch-target flex-1 sm:flex-none">
+              <Filter className="w-4 h-4 mr-2" />
+              Filter
+            </Button>
+            <Button size="sm" className="touch-target flex-1 sm:flex-none">
+              <Download className="w-4 h-4 mr-2" />
+              Export
+            </Button>
+          </div>
         </div>
-        <div className="flex gap-2">
-          <Button variant="outline" size="sm" className="touch-target">
-            <Filter className="w-4 h-4 mr-2" />
-            Filter
-          </Button>
-          <Button size="sm" className="touch-target">
-            <Download className="w-4 h-4 mr-2" />
-            Export
-          </Button>
-        </div>
-      </div>
 
-      {/* Performance Metrics */}
-      <div className="responsive-grid gap-3">
-        {performanceMetrics.map((metric, index) => (
-          <Card key={index} className="mobile-card">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm font-medium text-muted-foreground">{metric.title}</p>
-                  <p className="text-xl font-bold">{metric.value}</p>
+        {/* Performance Metrics */}
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
+          {performanceMetrics.map((metric, index) => (
+            <Card key={index} className="mobile-card">
+              <CardContent className="p-4">
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground truncate">{metric.title}</p>
+                  <p className="text-lg md:text-xl font-bold">{metric.value}</p>
+                  <div className={`flex items-center gap-1 ${metric.color}`}>
+                    {metric.trend === 'up' ? (
+                      <TrendingUp className="w-3 h-3" />
+                    ) : (
+                      <TrendingDown className="w-3 h-3" />
+                    )}
+                    <span className="text-xs font-medium">{metric.change}</span>
+                  </div>
                 </div>
-                <div className={`flex items-center gap-1 ${metric.color}`}>
-                  {metric.trend === 'up' ? (
-                    <TrendingUp className="w-4 h-4" />
-                  ) : (
-                    <TrendingDown className="w-4 h-4" />
-                  )}
-                  <span className="text-sm font-medium">{metric.change}</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
 
       {/* Main Reports Tabs */}
       <Tabs defaultValue="financial" className="w-full">
-        <TabsList className="grid w-full grid-cols-4 mb-4">
-          <TabsTrigger value="financial" className="text-xs">Financial</TabsTrigger>
-          <TabsTrigger value="sales" className="text-xs">Sales</TabsTrigger>
-          <TabsTrigger value="clients" className="text-xs">Clients</TabsTrigger>
-          <TabsTrigger value="operations" className="text-xs">Operations</TabsTrigger>
+        <TabsList className="mobile-tabs w-full justify-start">
+          <TabsTrigger value="financial" className="mobile-tab">Financial</TabsTrigger>
+          <TabsTrigger value="sales" className="mobile-tab">Sales</TabsTrigger>
+          <TabsTrigger value="clients" className="mobile-tab">Clients</TabsTrigger>
+          <TabsTrigger value="operations" className="mobile-tab">Operations</TabsTrigger>
         </TabsList>
 
         {/* Financial Reports */}
-        <TabsContent value="financial" className="space-y-4">
-          <Card>
+        <TabsContent value="financial" className="space-y-4 mt-4">
+          <Card className="mobile-card">
             <CardHeader className="pb-2">
               <CardTitle className="text-lg">Financial Overview</CardTitle>
               <CardDescription>Revenue, expenses, and profit trends</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px]">
+              <ChartContainer config={chartConfig} className="h-[250px] md:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <AreaChart data={financialData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -150,8 +150,8 @@ const Reports = () => {
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <Card>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <Card className="mobile-card">
               <CardHeader>
                 <CardTitle className="text-base">Profit Margin</CardTitle>
               </CardHeader>
@@ -176,11 +176,11 @@ const Reports = () => {
               </CardContent>
             </Card>
 
-            <Card>
+            <Card className="mobile-card">
               <CardHeader>
                 <CardTitle className="text-base">Cash Flow Summary</CardTitle>
               </CardHeader>
-              <CardContent className="space-y-3">
+              <CardContent className="space-y-4">
                 <div className="flex justify-between items-center">
                   <span className="text-sm text-muted-foreground">Total Inflow</span>
                   <span className="font-semibold text-green-600">$328,000</span>
@@ -189,7 +189,7 @@ const Reports = () => {
                   <span className="text-sm text-muted-foreground">Total Outflow</span>
                   <span className="font-semibold text-red-600">$236,000</span>
                 </div>
-                <div className="flex justify-between items-center border-t pt-2">
+                <div className="flex justify-between items-center border-t pt-3">
                   <span className="text-sm font-medium">Net Cash Flow</span>
                   <span className="font-bold text-green-600">$92,000</span>
                 </div>
@@ -199,14 +199,14 @@ const Reports = () => {
         </TabsContent>
 
         {/* Sales Reports */}
-        <TabsContent value="sales" className="space-y-4">
-          <Card>
+        <TabsContent value="sales" className="space-y-4 mt-4">
+          <Card className="mobile-card">
             <CardHeader>
               <CardTitle className="text-lg">Sales by Category</CardTitle>
               <CardDescription>Product category performance breakdown</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px]">
+              <ChartContainer config={chartConfig} className="h-[250px] md:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -238,7 +238,7 @@ const Reports = () => {
                   <div className="flex justify-between items-center">
                     <div className="flex items-center gap-3">
                       <div 
-                        className="w-4 h-4 rounded-full" 
+                        className="w-4 h-4 rounded-full flex-shrink-0" 
                         style={{ backgroundColor: COLORS[index % COLORS.length] }}
                       />
                       <span className="font-medium">{category.name}</span>
@@ -255,14 +255,14 @@ const Reports = () => {
         </TabsContent>
 
         {/* Client Reports */}
-        <TabsContent value="clients" className="space-y-4">
-          <Card>
+        <TabsContent value="clients" className="space-y-4 mt-4">
+          <Card className="mobile-card">
             <CardHeader>
               <CardTitle className="text-lg">Client Growth</CardTitle>
               <CardDescription>New vs returning clients over time</CardDescription>
             </CardHeader>
             <CardContent>
-              <ChartContainer config={chartConfig} className="h-[300px]">
+              <ChartContainer config={chartConfig} className="h-[250px] md:h-[300px]">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart data={clientData}>
                     <CartesianGrid strokeDasharray="3 3" />
@@ -278,21 +278,21 @@ const Reports = () => {
           </Card>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <Users className="w-8 h-8 mx-auto mb-2 text-blue-600" />
                 <p className="text-2xl font-bold">234</p>
                 <p className="text-sm text-muted-foreground">Total Clients</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <TrendingUp className="w-8 h-8 mx-auto mb-2 text-green-600" />
                 <p className="text-2xl font-bold">18</p>
                 <p className="text-sm text-muted-foreground">New This Month</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <DollarSign className="w-8 h-8 mx-auto mb-2 text-purple-600" />
                 <p className="text-2xl font-bold">$1,402</p>
@@ -303,30 +303,30 @@ const Reports = () => {
         </TabsContent>
 
         {/* Operations Reports */}
-        <TabsContent value="operations" className="space-y-4">
+        <TabsContent value="operations" className="space-y-4 mt-4">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <FileText className="w-6 h-6 mx-auto mb-2 text-blue-600" />
                 <p className="text-xl font-bold">127</p>
                 <p className="text-xs text-muted-foreground">Quotations</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <ShoppingCart className="w-6 h-6 mx-auto mb-2 text-green-600" />
                 <p className="text-xl font-bold">89</p>
                 <p className="text-xs text-muted-foreground">Orders</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <DollarSign className="w-6 h-6 mx-auto mb-2 text-purple-600" />
                 <p className="text-xl font-bold">156</p>
                 <p className="text-xs text-muted-foreground">Invoices</p>
               </CardContent>
             </Card>
-            <Card>
+            <Card className="mobile-card">
               <CardContent className="p-4 text-center">
                 <Calendar className="w-6 h-6 mx-auto mb-2 text-orange-600" />
                 <p className="text-xl font-bold">12</p>
@@ -335,16 +335,16 @@ const Reports = () => {
             </Card>
           </div>
 
-          <Card>
+          <Card className="mobile-card">
             <CardHeader>
               <CardTitle className="text-lg">Recent Transactions</CardTitle>
               <CardDescription>Latest invoice and payment activities</CardDescription>
             </CardHeader>
             <CardContent className="space-y-3">
               {recentTransactions.map((transaction) => (
-                <div key={transaction.id} className="mobile-list-item">
-                  <div className="flex-1">
-                    <div className="flex justify-between items-start mb-1">
+                <div key={transaction.id} className="mobile-list-item rounded-lg border p-4">
+                  <div className="flex-1 space-y-2">
+                    <div className="flex justify-between items-start">
                       <span className="font-medium text-sm">{transaction.client}</span>
                       <span className="font-semibold">{transaction.amount}</span>
                     </div>

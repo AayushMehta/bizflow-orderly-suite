@@ -7,7 +7,8 @@ import {
   ChevronDown,
   Building,
   X,
-  Menu
+  Menu,
+  MoreHorizontal
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
@@ -79,7 +80,7 @@ const TopNavBar = () => {
     }
   ]);
   
-  // Mock businesses data for the dropdown - in a real app this would come from an API or context
+  // Mock businesses data for the dropdown
   const [businesses, setBusinesses] = useState(() => {
     if (user?.role === "admin") {
       return [
@@ -130,20 +131,22 @@ const TopNavBar = () => {
   };
 
   return (
-    <div className="h-14 border-b bg-white flex items-center justify-between shadow-sm px-3">
+    <div className="h-14 border-b bg-white flex items-center justify-between shadow-sm px-3 sticky top-0 z-40">
       <div className="flex items-center">
-        <SidebarTrigger className="sidebar-trigger mr-2 flex md:hidden">
-          <Menu className="h-5 w-5" />
-        </SidebarTrigger>
+        {!isMobile && (
+          <SidebarTrigger className="sidebar-trigger mr-2">
+            <Menu className="h-5 w-5" />
+          </SidebarTrigger>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="gap-1 text-xs">
-              <Building className="h-3 w-3 md:h-4 md:w-4" />
-              <span className="truncate max-w-[80px] md:max-w-[120px]">{currentBusiness.name}</span>
+            <Button variant="outline" className="gap-1 text-xs h-8">
+              <Building className="h-3 w-3" />
+              <span className="truncate max-w-[80px] sm:max-w-[120px]">{currentBusiness.name}</span>
               <ChevronDown className="h-3 w-3" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="start" className="w-[200px]">
+          <DropdownMenuContent align="start" className="w-[200px] z-50">
             <DropdownMenuLabel>Switch Business</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {businesses.map((business) => (
@@ -167,20 +170,23 @@ const TopNavBar = () => {
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
-      <div className="flex items-center gap-2">
+      
+      <div className="flex items-center gap-1 sm:gap-2">
         <Dialog open={showNotifications} onOpenChange={setShowNotifications}>
           <Button 
             variant="ghost" 
             size="sm"
-            className="relative"
+            className="relative h-8 w-8 p-0"
             onClick={() => setShowNotifications(true)}
           >
             <Bell className="h-4 w-4" />
             {unreadCount > 0 && (
-              <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500"></span>
+              <span className="absolute -top-1 -right-1 h-4 w-4 rounded-full bg-red-500 text-white text-xs flex items-center justify-center">
+                {unreadCount}
+              </span>
             )}
           </Button>
-          <DialogContent className="sm:max-w-md max-h-[90vh] overflow-hidden">
+          <DialogContent className="sm:max-w-md max-h-[90vh] overflow-hidden z-50">
             <DialogHeader>
               <DialogTitle>Notifications</DialogTitle>
               <DialogDescription>
@@ -234,15 +240,22 @@ const TopNavBar = () => {
             </ScrollArea>
           </DialogContent>
         </Dialog>
+
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="ghost" size="sm" className="gap-1">
-              <User className="h-4 w-4" />
-              {!isMobile && <span className="truncate max-w-[80px]">{user?.name}</span>}
-              <ChevronDown className="h-3 w-3" />
+            <Button variant="ghost" size="sm" className="gap-1 h-8">
+              {isMobile ? (
+                <MoreHorizontal className="h-4 w-4" />
+              ) : (
+                <>
+                  <User className="h-4 w-4" />
+                  <span className="truncate max-w-[80px]">{user?.name}</span>
+                  <ChevronDown className="h-3 w-3" />
+                </>
+              )}
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-[200px]">
+          <DropdownMenuContent align="end" className="w-[200px] z-50">
             <DropdownMenuLabel>My Account</DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuItem className="flex justify-between items-center pointer-events-none">

@@ -100,20 +100,29 @@
   button, a, input, select, textarea {
     @apply touch-manipulation;
   }
+
+  /* Safe area support for devices with notches */
+  .safe-area-pb {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  .safe-area-pt {
+    padding-top: env(safe-area-inset-top);
+  }
 }
 
 /* Mobile-first utility classes */
 @layer components {
   .app-title {
-    @apply text-lg md:text-2xl font-bold text-app-blue-800;
+    @apply text-xl md:text-2xl font-bold text-app-blue-800;
   }
   
   .app-container {
-    @apply w-full max-w-full md:max-w-7xl mx-auto p-2 md:p-4;
+    @apply w-full max-w-full md:max-w-7xl mx-auto p-3 md:p-4;
   }
   
   .app-card {
-    @apply bg-white rounded-lg shadow-sm p-3 md:p-6 border border-app-slate-200;
+    @apply bg-white rounded-xl shadow-sm p-4 md:p-6 border border-app-slate-200;
   }
   
   .app-table {
@@ -121,15 +130,15 @@
   }
   
   .app-table th {
-    @apply bg-app-slate-100 text-left p-2 font-medium text-app-slate-700;
+    @apply bg-app-slate-100 text-left p-3 font-medium text-app-slate-700;
   }
   
   .app-table td {
-    @apply border-t border-app-slate-200 p-2;
+    @apply border-t border-app-slate-200 p-3;
   }
   
   .app-badge {
-    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-3 py-1 text-xs font-medium;
   }
   
   .app-badge-blue {
@@ -154,50 +163,65 @@
 
   /* Mobile optimized form controls */
   .form-input {
-    @apply h-10 px-3 py-2 rounded-md text-sm;
+    @apply h-12 px-4 py-3 rounded-lg text-base;
   }
 
   /* Responsive grid layouts */
   .responsive-grid {
-    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3;
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4;
   }
 
   /* Responsive flexbox layouts */
   .responsive-flex {
-    @apply flex flex-col sm:flex-row gap-2;
+    @apply flex flex-col sm:flex-row gap-3;
   }
   
   /* Touch target size improvements */
   .touch-target {
-    @apply min-h-[44px] min-w-[44px] flex items-center justify-center;
-  }
-  
-  /* Mobile bottom navigation */
-  .mobile-bottom-nav {
-    @apply fixed bottom-0 left-0 right-0 bg-white border-t flex items-center justify-around py-2 sm:hidden z-50;
-  }
-  
-  .mobile-nav-item {
-    @apply flex flex-col items-center justify-center p-2 rounded-md;
+    @apply min-h-[48px] min-w-[48px] flex items-center justify-center;
   }
   
   /* Mobile-optimized cards */
   .mobile-card {
-    @apply rounded-lg border shadow-sm p-3 bg-white mb-3;
+    @apply rounded-xl border shadow-sm p-4 bg-white mb-4;
   }
   
   /* Mobile list items */
   .mobile-list-item {
-    @apply flex items-center p-3 border-b last:border-b-0;
+    @apply flex items-center p-4 border-b last:border-b-0 min-h-[64px];
   }
   
   /* Mobile content container with proper padding */
   .mobile-container {
-    @apply px-3 py-2 md:px-6 md:py-4;
+    @apply px-4 py-3 md:px-6 md:py-4;
   }
   
   /* Floating action button for mobile */
   .fab {
-    @apply fixed bottom-16 right-4 h-12 w-12 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-50;
+    @apply fixed bottom-24 right-6 h-14 w-14 rounded-full bg-primary text-primary-foreground shadow-lg flex items-center justify-center z-40;
+  }
+
+  /* Mobile-first button styles */
+  .mobile-btn {
+    @apply h-12 px-6 rounded-lg font-medium text-base touch-manipulation;
+  }
+
+  /* Mobile-optimized tabs */
+  .mobile-tabs {
+    @apply flex overflow-x-auto scrollbar-hide gap-1 pb-2;
+  }
+
+  .mobile-tab {
+    @apply flex-shrink-0 px-4 py-2 rounded-lg text-sm font-medium whitespace-nowrap;
+  }
+
+  /* Hide scrollbar for webkit browsers */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
   }
 }
