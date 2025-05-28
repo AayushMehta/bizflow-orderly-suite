@@ -6,6 +6,7 @@ import TopNavBar from "@/components/TopNavBar";
 import MobileNavigation from "@/components/MobileNavigation";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { useEffect, useState } from "react";
+import { cn } from "@/lib/utils";
 
 const AppLayout = () => {
   const isMobile = useIsMobile();
