@@ -28,6 +28,7 @@ import Teams from '@/pages/Teams';
 import BusinessOnboarding from '@/pages/BusinessOnboarding';
 import BusinessSelect from '@/pages/BusinessSelect';
 import BusinessSettings from '@/pages/BusinessSettings';
+import Reports from '@/pages/Reports';
 import NotFound from '@/pages/NotFound';
 
 // Create a client
@@ -46,6 +47,7 @@ function App() {
             {/* Protected routes */}
             <Route path="/" element={<AppLayout />}>
               <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/reports" element={<Reports />} />
               <Route path="/quotations" element={<Quotations />} />
               <Route path="/quotations/:id" element={<QuotationDetail />} />
               <Route path="/quotations/new" element={<QuotationForm />} />
